@@ -50,20 +50,46 @@ public class World {
     }
 
     public static void addRoom(TETile[][] world, Position p, int width, int height) {
-        if (width <= 0 || height <= 0) {
+        // p = top left wall tile, width and height = dimension of room.
+        // would have to add 2 to the wall iteration to account for left and right wall
+
+        // base cases
+        if (width <= 0 || height <= 0) {  //if width or height is less than or equal to 0
+            return;
+        }
+        if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
+            return;                                                       // walls) is out of bounds of the window's
+        }                                                                 // dimensions
+        for (int i = 0; i < width + 2; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
+            for (int j = 0; j < height + 2; j++) {
+                if (world[p.x + i][p.y + j] != Tileset.NOTHING) {
+                    break;
+                }
+                break;
+            }
             return;
         }
 
-        //base case where room isnt out of bounds
-
-        for (int i = 0; i < width; i++) {
-            world[p.x + i][p.y] = Tileset.WALL;
+        //makes a room
+        for (int i = 0; i < width + 2; i++) {
+            for (int j = 0; j < height + 2; j++) {
+                if (i == 0 || i == width + 2) {
+                    world[p.x + i][p.y + j] = Tileset.WALL;
+                }
+                if (i > 0 && i < width + 2) {
+                    if (j == 0 && j == height + 2) {
+                        world[p.x + i][p.y + j] = Tileset.WALL;
+                    }
+                    if (j > 0 && j < height + 2) {
+                        world[p.x + i][p.y + j] = Tileset.FLOOR;
+                    }
+                }
+            }
         }
-
 
     }
 
-    public static void drawWorld(TETile[][] tiles) {
+    public static void drawWorldTest(TETile[][] tiles) {
         Position p = new Position(2, 5);
         addRoom(tiles, p, 3, 4);
     }
@@ -81,7 +107,7 @@ public class World {
             }
         }
 
-        drawWorld(world);
+        drawWorldTest(world);
 
         // fills in a block 14 tiles wide by 4 tiles tall
 //        for (int x = 20; x < 35; x += 1) {
