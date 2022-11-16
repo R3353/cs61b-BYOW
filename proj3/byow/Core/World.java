@@ -71,7 +71,7 @@ public class World {
 //        }
 
         for (int i = 0; i < width + 2; i++) {
-            
+
         }
 
         for (int i = 0; i < width; i++) {
