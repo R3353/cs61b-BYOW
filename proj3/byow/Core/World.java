@@ -69,7 +69,10 @@ public class World {
         }
 
         for (int i = 0; i < width + 2; i++) {
-
+            for (int j = 0; j < height + 2; j++) {
+                Position t = p.shift(i, j);
+                world[t.x][t.y] = Tileset.WALL;
+            }
         }
 
         for (int i = 0; i < width; i++) {
@@ -169,4 +172,4 @@ public class World {
         }
     }
 
-}
+}g
