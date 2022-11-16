@@ -74,6 +74,16 @@ public class World {
             world[p.x+i][p.y] = Tileset.WALL;
             Position newPos = p.shift(0, height + 1);
             world[newPos.x+i][newPos.y] = Tileset.WALL;
+            Position newPost = p.shift(0, i);
+            world[newPost.x][newPost.y] = Tileset.FLOWER;
+            Position right = p.shift(width+1, i);
+            world[right.x][right.y] = Tileset.WALL;
+        }
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++){
+                Position t = p.shift(1, 1);
+                world[t.x + i][t.y + j];
+            }
         }
 
         //makes a room
