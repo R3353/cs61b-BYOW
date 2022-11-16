@@ -29,6 +29,8 @@ public class World {
 
         wallsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
         floorsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
+
+        RANDOM.
     }
 
     public static class Position {
@@ -71,30 +73,13 @@ public class World {
 //        }
 
         for (int i = 0; i < width + 2; i++) {
-            world[p.x+i][p.y] = Tileset.WALL;
-            Position newPos = p.shift(0, height + 1);
-            world[newPos.x+i][newPos.y] = Tileset.WALL;
-            Position newPost = p.shift(0, i);
-<<<<<<< HEAD
-            world[newPost.x][newPost.y] = Tileset.FLOWER;
-            Position right = p.shift(width+1, i);
-            world[right.x][right.y] = Tileset.WALL;
-        }
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++){
-                Position t = p.shift(1, 1);
-                world[t.x + i][t.y + j];
-=======
-            world[newPost.x][newPost.y] = Tileset.WALL;
-            Position newRight = p.shift(width + 1, i);
-            world[newRight.x][newRight.y] = Tileset.WALL;
+            
         }
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 Position t = p.shift(1, 1);
                 world[t.x + i][t.y + j] = Tileset.FLOOR;
->>>>>>> 4ad843197ffbae47866d0ac8a06134a1d4a3c85f
             }
         }
 
