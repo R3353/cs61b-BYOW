@@ -73,7 +73,13 @@ public class World {
 //        }
 
         for (int i = 0; i < width + 2; i++) {
-            
+            world[p.x+i][p.y] = Tileset.WALL;
+            Position newPos = p.shift(0, height + 1);
+            world[newPos.x+i][newPos.y] = Tileset.WALL;
+            Position newPost = p.shift(0, i);
+            world[newPost.x][newPost.y] = Tileset.WALL;
+            Position right = p.shift(width + 1, i);
+            world[right.x][right.y] = Tileset.WALL;
         }
 
         for (int i = 0; i < width; i++) {
