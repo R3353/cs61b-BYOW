@@ -8,7 +8,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import java.util.Random;
 
 /**
- *  Draws a world that is mostly empty except for a small region.
+ * Draws a world that is mostly empty except for a small region.
  */
 public class World {
 
@@ -17,21 +17,19 @@ public class World {
     private static final int maxWidth = WIDTH - 1;
     private static final int maxHeight = HEIGHT - 1;
 
-    private static long SEED;
-    private static Random RANDOM;
+    private static final long SEED = 12345;
+    private static final Random RANDOM = new Random(SEED);
 
     private WeightedQuickUnionUF wallsWQU;
     private WeightedQuickUnionUF floorsWQU;
 
-    public World(int seed) {
-        SEED = seed;
-        RANDOM = new Random(SEED);
-
-        wallsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
-        floorsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
-
-        RANDOM.
-    }
+//    public World(int seed) {
+//        SEED = seed;
+//        RANDOM = new Random(SEED);
+//
+//        wallsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
+//        floorsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
+//    }
 
     public static class Position {
         int x;
@@ -73,13 +71,7 @@ public class World {
 //        }
 
         for (int i = 0; i < width + 2; i++) {
-            world[p.x+i][p.y] = Tileset.WALL;
-            Position newPos = p.shift(0, height + 1);
-            world[newPos.x+i][newPos.y] = Tileset.WALL;
-            Position newPost = p.shift(0, i);
-            world[newPost.x][newPost.y] = Tileset.WALL;
-            Position right = p.shift(width + 1, i);
-            world[right.x][right.y] = Tileset.WALL;
+            
         }
 
         for (int i = 0; i < width; i++) {
@@ -89,28 +81,27 @@ public class World {
             }
         }
 
-        //makes a room
-//        for (int i = 0; i < width + 2; i++) {
-//            for (int j = 0; j < height + 2; j++) {
-//                if (i == 0 || i == width + 2) {
-//                    world[p.x + i][p.y + j] = Tileset.WALL;
-//                }
-//                if (i > 0 && i < width + 2) {
-//                    if (j == 0 && j == height + 2) {
-//                        world[p.x + i][p.y + j] = Tileset.WALL;
-//                    }
-//                    if (j > 0 && j < height + 2) {
-//                        world[p.x + i][p.y + j] = Tileset.FLOOR;
-//                    }
-//                }
-//            }
-//        }
+        int sortingHat = RANDOM.nextInt(4);
+        if (sortingHat == 0) { // bottom
+            world[p.x + RANDOM.nextInt(width + 1)][p.y] = Tileset.FLOWER;}
+        else if (sortingHat == 1) { // top
+            world[p.x + RANDOM.nextInt(width + 1)][p.y + height + 1] = Tileset.GRASS;}
+        else if (sortingHat == 2) { // left
+            world[p.x][p.y + RANDOM.nextInt(height + 1)] = Tileset.WATER;}
+        else if (sortingHat == 3) { // right
+            world[p.x + width + 1][p.y + RANDOM.nextInt(height + 2)] = Tileset.AVATAR;}
 
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
         Position p = new Position(2, 5);
         addRoom(tiles, p, 3, 4);
+        Position pp = new Position(9, 9);
+        addRoom(tiles, pp, 5, 8);
+        Position ppp = new Position(15, 20);
+        addRoom(tiles, ppp, 5, 5);
+        Position pppp = new Position(20, 5);
+        addRoom(tiles, pppp, 2, 2);
     }
 
     public static void main(String[] args) {
@@ -159,17 +150,22 @@ public class World {
 //        }
 //    }
 
-    /** Picks a RANDOM tile with a 33% change of being
-     *  a wall, 33% chance of being a flower, and 33%
-     *  chance of being empty space.
+    /**
+     * Picks a RANDOM tile with a 33% change of being
+     * a wall, 33% chance of being a flower, and 33%
+     * chance of being empty space.
      */
     private static TETile randomTile() {
         int tileNum = RANDOM.nextInt(3);
         switch (tileNum) {
-            case 0: return Tileset.WALL;
-            case 1: return Tileset.FLOWER;
-            case 2: return Tileset.NOTHING;
-            default: return Tileset.NOTHING;
+            case 0:
+                return Tileset.WALL;
+            case 1:
+                return Tileset.FLOWER;
+            case 2:
+                return Tileset.NOTHING;
+            default:
+                return Tileset.NOTHING;
         }
     }
 
