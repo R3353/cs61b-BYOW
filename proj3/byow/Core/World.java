@@ -57,18 +57,16 @@ public class World {
         if (width <= 0 || height <= 0) {  //if width or height is less than or equal to 0
             return;
         }
-//        if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
-//            return;                                                       // walls) is out of bounds of the window's
-//        }                                                                 // dimensions
-//        for (int i = 0; i < width + 2; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
-//            for (int j = 0; j < height + 2; j++) {
-//                if (world[p.x + i][p.y + j] != Tileset.NOTHING) {
-//                    break;
-//                }
-//                break;
-//            }
-//            return;
-//        }
+        if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
+            return;                                                       // walls) is out of bounds of the window's
+        }                                                                 // dimensions
+        for (int i = 0; i < width + 2; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
+            for (int j = 0; j < height + 2; j++) {
+                if (world[p.x + i][p.y + j] != Tileset.NOTHING) {
+                    return;
+                }
+            }
+        }
 
         for (int i = 0; i < width + 2; i++) {
             for (int j = 0; j < height + 2; j++) {
@@ -84,7 +82,7 @@ public class World {
             }
         }
 
-        int sortingHat = RANDOM.nextInt(4);
+        int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
         if (sortingHat == 0) { // bottom
             world[p.x + RANDOM.nextInt(width + 1)][p.y] = Tileset.FLOWER;}
         else if (sortingHat == 1) { // top
@@ -99,12 +97,14 @@ public class World {
     public static void drawWorldTest(TETile[][] tiles) {
         Position p = new Position(2, 5);
         addRoom(tiles, p, 3, 4);
-        Position pp = new Position(9, 9);
-        addRoom(tiles, pp, 5, 8);
-        Position ppp = new Position(15, 20);
-        addRoom(tiles, ppp, 5, 5);
-        Position pppp = new Position(20, 5);
-        addRoom(tiles, pppp, 2, 2);
+        Position ppppp = new Position(2, 5);
+        addRoom(tiles, ppppp, 3, 3);
+//        Position pp = new Position(9, 9);
+//        addRoom(tiles, pp, 5, 8);
+//        Position ppp = new Position(15, 20);
+//        addRoom(tiles, ppp, 5, 5);
+//        Position pppp = new Position(20, 5);
+//        addRoom(tiles, pppp, 2, 2);
     }
 
     public static void main(String[] args) {
