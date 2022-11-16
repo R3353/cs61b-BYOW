@@ -70,22 +70,28 @@ public class World {
             return;
         }
 
-        //makes a room
         for (int i = 0; i < width + 2; i++) {
-            for (int j = 0; j < height + 2; j++) {
-                if (i == 0 || i == width + 2) {
-                    world[p.x + i][p.y + j] = Tileset.WALL;
-                }
-                if (i > 0 && i < width + 2) {
-                    if (j == 0 && j == height + 2) {
-                        world[p.x + i][p.y + j] = Tileset.WALL;
-                    }
-                    if (j > 0 && j < height + 2) {
-                        world[p.x + i][p.y + j] = Tileset.FLOOR;
-                    }
-                }
-            }
+            world[p.x+i][p.y] = Tileset.WALL;
+            Position newPos = p.shift(0, height + 1);
+            world[newPos.x+i][newPos.y] = Tileset.WALL;
         }
+
+        //makes a room
+//        for (int i = 0; i < width + 2; i++) {
+//            for (int j = 0; j < height + 2; j++) {
+//                if (i == 0 || i == width + 2) {
+//                    world[p.x + i][p.y + j] = Tileset.WALL;
+//                }
+//                if (i > 0 && i < width + 2) {
+//                    if (j == 0 && j == height + 2) {
+//                        world[p.x + i][p.y + j] = Tileset.WALL;
+//                    }
+//                    if (j > 0 && j < height + 2) {
+//                        world[p.x + i][p.y + j] = Tileset.FLOOR;
+//                    }
+//                }
+//            }
+//        }
 
     }
 
