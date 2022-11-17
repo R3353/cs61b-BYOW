@@ -12,8 +12,8 @@ import java.util.Random;
  */
 public class World {
 
-    private static final int WIDTH = 60;
-    private static final int HEIGHT = 30;
+    private static final int WIDTH = 80;
+    private static final int HEIGHT = 40;
     private static final int maxWidth = WIDTH - 1;
     private static final int maxHeight = HEIGHT - 1;
 
@@ -23,13 +23,6 @@ public class World {
     private WeightedQuickUnionUF wallsWQU;
     private WeightedQuickUnionUF floorsWQU;
 
-//    public World(int seed) {
-//        SEED = seed;
-//        RANDOM = new Random(SEED);
-//
-//        wallsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
-//        floorsWQU = new WeightedQuickUnionUF(WIDTH * HEIGHT);
-//    }
 
     public static class Position {
         int x;
@@ -54,18 +47,25 @@ public class World {
         // would have to add 2 to the wall iteration to account for left and right wall
 
         // base cases
-        if (width <= 0 || height <= 0) {  //if width or height is less than or equal to 0
+        if (width <= 1 || height <= 1) {  //if width or height is less than or equal to 0
             return;
         }
         if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
             return;                                                       // walls) is out of bounds of the window's
         }                                                                 // dimensions
-        for (int i = 0; i < width + 2; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
-            for (int j = 0; j < height + 2; j++) {
+        for (int i = 0; i < width + 3; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
+            for (int j = 0; j < height + 3; j++) {
                 if (world[p.x + i][p.y + j] != Tileset.NOTHING) {
                     return;
                 }
             }
+        }
+        if (p.y == 0 || p.y == 1 || p.y == 2 || p.y + height == maxHeight || p.y + 1 + height== maxHeight || p.y + 2 + height== maxHeight || p.y + 3 + height == maxHeight) {
+            return;
+        }
+
+        if (p.x == 0 || p.x == 1 || p.x == 2 || p.x + width == maxWidth || p.x + 1 + width == maxWidth || p.x + 2 + width == maxWidth || p.x + 3 + width == maxWidth) {
+            return;
         }
 
         for (int i = 0; i < width + 2; i++) {
@@ -81,30 +81,40 @@ public class World {
                 world[t.x + i][t.y + j] = Tileset.FLOOR;
             }
         }
+        if (width == 1) {
+            world[p.x][p.y+ ((height)/2)]= Tileset.FLOOR;
+            world[p.x-1][p.y+ ((height)/2)]= Tileset.AVATAR;
+            return;
+        } else if (height == 1) {
+            world[p.x+((width)/2)][p.y] = Tileset.FLOOR;
+            world[p.x+((width)/2)][p.y-1] = Tileset.AVATAR;
+            return;
+        }
 
         int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
         if (sortingHat == 0) { // bottom
-            world[p.x + RANDOM.nextInt(width + 1)][p.y] = Tileset.FLOWER;}
+            world[p.x+((width)/2)][p.y] = Tileset.FLOOR;
+            world[p.x+((width)/2)][p.y - 1] = Tileset.AVATAR;
+        }
         else if (sortingHat == 1) { // top
-            world[p.x + RANDOM.nextInt(width + 1)][p.y + height + 1] = Tileset.GRASS;}
+            world[p.x+((width)/2)][p.y + height + 1] = Tileset.FLOOR;
+            world[p.x+((width)/2)][p.y + height + 2] = Tileset.AVATAR;
+        }
         else if (sortingHat == 2) { // left
-            world[p.x][p.y + RANDOM.nextInt(height + 1)] = Tileset.WATER;}
-        else if (sortingHat == 3) { // right
-            world[p.x + width + 1][p.y + RANDOM.nextInt(height + 2)] = Tileset.AVATAR;}
-
+            world[p.x][p.y+ ((height)/2)] = Tileset.FLOOR;
+            world[p.x - 1][p.y+ ((height)/2)] = Tileset.AVATAR;
+        }
+        else { // right
+            world[p.x + width + 1][p.y + ((height)/2)] = Tileset.FLOOR;
+            world[p.x + width + 2][p.y + ((height)/2)] = Tileset.AVATAR;
+        }
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
-        Position p = new Position(2, 5);
-        addRoom(tiles, p, 3, 4);
-        Position ppppp = new Position(2, 5);
-        addRoom(tiles, ppppp, 3, 3);
-//        Position pp = new Position(9, 9);
-//        addRoom(tiles, pp, 5, 8);
-//        Position ppp = new Position(15, 20);
-//        addRoom(tiles, ppp, 5, 5);
-//        Position pppp = new Position(20, 5);
-//        addRoom(tiles, pppp, 2, 2);
+        for (int i = 0; i < RANDOM.nextInt(HEIGHT, WIDTH*HEIGHT); i++) {
+            Position p = new Position(RANDOM.nextInt(WIDTH), RANDOM.nextInt(HEIGHT));
+            addRoom(tiles, p, RANDOM.nextInt(WIDTH/10), RANDOM.nextInt(HEIGHT/5));
+        }
     }
 
     public static void main(String[] args) {
@@ -119,57 +129,7 @@ public class World {
                 world[x][y] = Tileset.NOTHING;
             }
         }
-
         drawWorldTest(world);
-
-        // fills in a block 14 tiles wide by 4 tiles tall
-//        for (int x = 20; x < 35; x += 1) {
-//            for (int y = 5; y < 10; y += 1) {
-//                world[x][y] = Tileset.WALL;
-//            }
-//        }
-
-        // draws the world to the screen
         ter.renderFrame(world);
-
-//        TETile[][] randomTiles = new TETile[WIDTH][HEIGHT];
-//        fillWithRandomTiles(randomTiles);
-//
-//        ter.renderFrame(randomTiles);
     }
-
-
-    /**
-     * Fills the given 2D array of tiles with RANDOM tiles.
-     * @param tiles
-     */
-//    public static void fillWithRandomTiles(TETile[][] tiles) {
-//        int height = tiles[0].length;
-//        int width = tiles.length;
-//        for (int x = 0; x < width; x += 1) {
-//            for (int y = 0; y < height; y += 1) {
-//                tiles[x][y] = randomTile();
-//            }
-//        }
-//    }
-
-    /**
-     * Picks a RANDOM tile with a 33% change of being
-     * a wall, 33% chance of being a flower, and 33%
-     * chance of being empty space.
-     */
-    private static TETile randomTile() {
-        int tileNum = RANDOM.nextInt(3);
-        switch (tileNum) {
-            case 0:
-                return Tileset.WALL;
-            case 1:
-                return Tileset.FLOWER;
-            case 2:
-                return Tileset.NOTHING;
-            default:
-                return Tileset.NOTHING;
-        }
-    }
-
-}g
+}
