@@ -4,6 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
+import byow.Core.KrushkalMST;
 
 import java.util.Random;
 
@@ -22,6 +23,10 @@ public class World {
 
     private WeightedQuickUnionUF wallsWQU;
     private WeightedQuickUnionUF floorsWQU;
+
+    private static KrushkalMST.Graph graph;
+    private static int room;
+
 
 
     public static class Position {
@@ -47,7 +52,7 @@ public class World {
         // would have to add 2 to the wall iteration to account for left and right wall
 
         // base cases
-        if (width <= 1 || height <= 1) {  //if width or height is less than or equal to 0
+        if (width < 1 || height < 1) {  //if width or height is less than or equal to 0
             return;
         }
         if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
@@ -81,40 +86,42 @@ public class World {
                 world[t.x + i][t.y + j] = Tileset.FLOOR;
             }
         }
-        if (width == 1) {
-            world[p.x][p.y+ ((height)/2)]= Tileset.FLOOR;
-            world[p.x-1][p.y+ ((height)/2)]= Tileset.AVATAR;
-            return;
-        } else if (height == 1) {
-            world[p.x+((width)/2)][p.y] = Tileset.FLOOR;
-            world[p.x+((width)/2)][p.y-1] = Tileset.AVATAR;
-            return;
-        }
+        room++;
 
+//        if (width == 1) {
+//            world[p.x][p.y+ ((height)/2)]= Tileset.FLOOR;
+//            world[p.x-1][p.y+ ((height)/2)]= Tileset.AVATAR;
+//            return;
+//        } else if (height == 1) {
+//            world[p.x+((width)/2)][p.y] = Tileset.FLOOR;
+//            world[p.x+((width)/2)][p.y-1] = Tileset.AVATAR;
+//            return;
+//        }
         int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
         if (sortingHat == 0) { // bottom
-            world[p.x+((width)/2)][p.y] = Tileset.FLOOR;
-            world[p.x+((width)/2)][p.y - 1] = Tileset.AVATAR;
+            world[p.x+((width+1)/2)][p.y] = Tileset.FLOOR;
+            world[p.x+((width+1)/2)][p.y - 1] = Tileset.AVATAR;
         }
         else if (sortingHat == 1) { // top
-            world[p.x+((width)/2)][p.y + height + 1] = Tileset.FLOOR;
-            world[p.x+((width)/2)][p.y + height + 2] = Tileset.AVATAR;
+            world[p.x+((width+1)/2)][p.y + height + 1] = Tileset.FLOOR;
+            world[p.x+((width+1)/2)][p.y + height + 2] = Tileset.AVATAR;
         }
         else if (sortingHat == 2) { // left
-            world[p.x][p.y+ ((height)/2)] = Tileset.FLOOR;
-            world[p.x - 1][p.y+ ((height)/2)] = Tileset.AVATAR;
+            world[p.x][p.y + ((height+1)/2)] = Tileset.FLOOR;
+            world[p.x - 1][p.y+ ((height+1)/2)] = Tileset.AVATAR;
         }
         else { // right
-            world[p.x + width + 1][p.y + ((height)/2)] = Tileset.FLOOR;
-            world[p.x + width + 2][p.y + ((height)/2)] = Tileset.AVATAR;
+            world[p.x + width + 1][p.y + ((height+1)/2)] = Tileset.FLOOR;
+            world[p.x + width + 2][p.y + ((height+1)/2)] = Tileset.AVATAR;
         }
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
-        for (int i = 0; i < RANDOM.nextInt(HEIGHT, WIDTH+HEIGHT); i++) {
+        for (int i = 0; i < RANDOM.nextInt(HEIGHT, WIDTH*HEIGHT); i++) {
             Position p = new Position(RANDOM.nextInt(WIDTH), RANDOM.nextInt(HEIGHT));
             addRoom(tiles, p, RANDOM.nextInt(WIDTH/10), RANDOM.nextInt(HEIGHT/5));
         }
+        
     }
 
     public static void main(String[] args) {
