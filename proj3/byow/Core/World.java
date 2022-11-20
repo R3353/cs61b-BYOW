@@ -3,29 +3,25 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-import byow.Core.KrushkalMST;
 
 import java.util.Random;
+
+import static byow.Core.ShortestPath.pathExists;
 
 /**
  * Draws a world that is mostly empty except for a small region.
  */
 public class World {
 
-    private static final int WIDTH = 80;
-    private static final int HEIGHT = 40;
+    private static final int WIDTH = 60;
+    private static final int HEIGHT = 30;
     private static final int maxWidth = WIDTH - 1;
     private static final int maxHeight = HEIGHT - 1;
 
     private static final long SEED = 12345;
     private static final Random RANDOM = new Random(SEED);
 
-    private WeightedQuickUnionUF wallsWQU;
-    private WeightedQuickUnionUF floorsWQU;
-
-    private static KrushkalMST.Graph graph;
-    private static int room;
+    private static int room = 0;
 
 
 
@@ -42,9 +38,9 @@ public class World {
             return new Position(this.x + dx, this.y + dy);
         }
 
-        private int xyTo1D(Position p) {
-            return p.x * WIDTH + p.y;
-        }
+    }
+    public static int xyTo1D(Position p) {
+        return (p.x * WIDTH) + p.y;
     }
 
     public static void addRoom(TETile[][] world, Position p, int width, int height) {
@@ -88,42 +84,55 @@ public class World {
         }
         room++;
 
-//        if (width == 1) {
-//            world[p.x][p.y+ ((height)/2)]= Tileset.FLOOR;
-//            world[p.x-1][p.y+ ((height)/2)]= Tileset.AVATAR;
-//            return;
-//        } else if (height == 1) {
-//            world[p.x+((width)/2)][p.y] = Tileset.FLOOR;
-//            world[p.x+((width)/2)][p.y-1] = Tileset.AVATAR;
-//            return;
-//        }
         int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
         if (sortingHat == 0) { // bottom
             world[p.x+((width+1)/2)][p.y] = Tileset.FLOOR;
             world[p.x+((width+1)/2)][p.y - 1] = Tileset.AVATAR;
+            if (room > 1) {
+                Node source = new Node(p.x+((width+1)/2), p.y-1, xyTo1D(p));
+                System.out.println(pathExists(world, source));
+            }
         }
         else if (sortingHat == 1) { // top
             world[p.x+((width+1)/2)][p.y + height + 1] = Tileset.FLOOR;
-            world[p.x+((width+1)/2)][p.y + height + 2] = Tileset.AVATAR;
+            world[p.x+((width+1)/2)][p.y + height + 2] = Tileset.WATER;
+            if (room > 1) {
+                Node source = new Node(p.x+((width+1)/2), p.y + height + 2, xyTo1D(p));
+                System.out.println(pathExists(world, source));
+            }
         }
         else if (sortingHat == 2) { // left
             world[p.x][p.y + ((height+1)/2)] = Tileset.FLOOR;
             world[p.x - 1][p.y+ ((height+1)/2)] = Tileset.AVATAR;
+            if (room > 1) {
+                Node source = new Node(p.x-1, p.y+ ((height+1)/2), xyTo1D(p));
+                System.out.println(pathExists(world, source));
+            }
         }
         else { // right
             world[p.x + width + 1][p.y + ((height+1)/2)] = Tileset.FLOOR;
             world[p.x + width + 2][p.y + ((height+1)/2)] = Tileset.AVATAR;
+            if (room > 1) {
+                Node source = new Node(p.x + width + 2, p.y + ((height+1)/2), xyTo1D(p));
+                System.out.println(pathExists(world, source));
+            }
         }
     }
 
 
 
     public static void drawWorldTest(TETile[][] tiles) {
-        for (int i = 0; i < RANDOM.nextInt(HEIGHT, WIDTH*HEIGHT); i++) {
-            Position p = new Position(RANDOM.nextInt(WIDTH), RANDOM.nextInt(HEIGHT));
-            addRoom(tiles, p, RANDOM.nextInt(WIDTH/10), RANDOM.nextInt(HEIGHT/5));
-        }
-        
+//        for (int i = 0; i < RANDOM.nextInt(1, 20); i++) {
+//            Position p = new Position(RANDOM.nextInt(WIDTH), RANDOM.nextInt(HEIGHT));
+//            addRoom(tiles, p, RANDOM.nextInt(WIDTH/10), RANDOM.nextInt(HEIGHT/5));
+//            //pathExists(tiles);
+//        }
+        Position p = new Position(10, 10);
+        addRoom(tiles, p, 2, 2);
+        Position p2 = new Position( 17, 17);
+        addRoom(tiles, p2, 2, 2);
+        Position p3 = new Position( 30, 10);
+        addRoom(tiles, p3, 2, 2);
     }
 
     public static void main(String[] args) {
