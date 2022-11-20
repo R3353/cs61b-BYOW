@@ -116,6 +116,8 @@ public class World {
         }
     }
 
+
+
     public static void drawWorldTest(TETile[][] tiles) {
         for (int i = 0; i < RANDOM.nextInt(HEIGHT, WIDTH*HEIGHT); i++) {
             Position p = new Position(RANDOM.nextInt(WIDTH), RANDOM.nextInt(HEIGHT));
