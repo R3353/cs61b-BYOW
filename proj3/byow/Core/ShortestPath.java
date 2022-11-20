@@ -2,7 +2,6 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import byow.Core.World;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -63,7 +62,7 @@ class Node {
     int y;
     int distanceFromSource;
 
-    Node(int x, int y, int dis) {
+    Node(int x, int y, Integer dis) {
         this.x = x;
         this.y = y;
         this.distanceFromSource = dis;
