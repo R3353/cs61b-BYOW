@@ -15,6 +15,7 @@ public class ShortestPath {
         //Node source = new Node(0, 0, 0);
         Queue<Node> queue = new LinkedList<Node>();
 
+
         int numOfRows = matrix.length;
         int numOfColumns = matrix[0].length;
 
@@ -23,12 +24,11 @@ public class ShortestPath {
         while(!queue.isEmpty()) {
             Node poped = queue.poll();
 
-            if(matrix[poped.x][poped.y].equals(Tileset.WATER)) {
+            if(matrix[poped.x][poped.y].equals(Tileset.AVATAR) && poped.y != source.y && poped.x != source.x ) {
                 return poped.distanceFromSource;
             }
             else {
                 matrix[poped.x][poped.y] = Tileset.FLOWER;
-
                 List<Node> neighbourList = addNeighbours(poped, matrix, numOfRows, numOfColumns);
                 queue.addAll(neighbourList);
             }
@@ -40,19 +40,22 @@ public class ShortestPath {
 
         List<Node> list = new LinkedList<Node>();
 
-        if((poped.x-1 >= 0 && poped.x-1 < numOfRows) && !matrix[poped.x-1][poped.y].equals(Tileset.WALL)) {
+        if((poped.x - 1 > -1 && poped.x - 1 < matrix.length) && !matrix[poped.x-1][poped.y].equals(Tileset.WALL)) {
             list.add(new Node(poped.x-1, poped.y, poped.distanceFromSource+1));
         }
-        if((poped.x+1 >= 0 && poped.x+1 < numOfRows) && !matrix[poped.x+1][poped.y].equals(Tileset.WALL)) {
+        if((poped.x + 1 > -1 && poped.x + 1 < matrix.length) && !matrix[poped.x+1][poped.y].equals(Tileset.WALL)) {
             list.add(new Node(poped.x+1, poped.y, poped.distanceFromSource+1));
         }
-        if((poped.y-1 >= 0 && poped.y-1 < numOfColumns) && !matrix[poped.x][poped.y-1].equals(Tileset.WALL)) {
+        if((poped.y - 1 > -1 && poped.y - 1 < matrix.length) && !matrix[poped.x][poped.y-1].equals(Tileset.WALL)) {
             list.add(new Node(poped.x, poped.y-1, poped.distanceFromSource+1));
         }
-        if((poped.y+1 >= 0 && poped.y+1 < numOfColumns) && !matrix[poped.x][poped.y+1].equals(Tileset.WALL)) {
+        if((poped.y + 1 > -1 && poped.y + 1 < matrix.length) && !matrix[poped.x][poped.y+1].equals(Tileset.WALL)) {
             list.add(new Node(poped.x, poped.y+1, poped.distanceFromSource+1));
         }
         return list;
+    }
+    public static int To1D(Node thing) {
+        return (thing.x * 60) + thing.y;
     }
 }
 class Node {
@@ -66,3 +69,4 @@ class Node {
         this.distanceFromSource = dis;
     }
 }
+
