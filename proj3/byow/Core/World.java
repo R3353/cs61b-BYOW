@@ -5,9 +5,15 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import static byow.Core.ShortestPath.pathExists;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+import static java.util.Collections.min;
+import static java.util.Collections.sort;
 
 /**
  * Draws a world that is mostly empty except for a small region.
@@ -22,11 +28,13 @@ public class World {
     private static final long SEED = 12345;
     private static final Random RANDOM = new Random(SEED);
 
-    private static int room = 0;
+    private static int roomCount = 0;
+    private static HashMap<Integer, ArrayList<Integer>> roomDict = new HashMap<>();
+    private static ArrayList<Boolean> visited = new ArrayList<>(roomCount);
 
-    private static ArrayList<Position> roomList = new ArrayList<>();
-
-
+    /* key: room number (acc to roomcount)
+*  value: List(visited (0 = false and 1 = true), p.x, p.y, width, height)
+*/
 
     public static class Position {
         int x;
@@ -65,6 +73,17 @@ public class World {
             }
         }
 
+        //keeping track of rooms
+        ArrayList<Integer> roomVal = new ArrayList<>(5);
+        roomVal.add(0);
+        roomVal.add(p.x);
+        roomVal.add(p.y);
+        roomVal.add(width);
+        roomVal.add(height);
+
+        roomDict.put(roomCount, roomVal);
+
+
         for (int i = 0; i < width + 2; i++) {
             for (int j = 0; j < height + 2; j++) {
                 Position t = p.shift(i, j);
@@ -78,37 +97,89 @@ public class World {
                 world[t.x + i][t.y + j] = Tileset.FLOOR;
             }
         }
-        room++;
+        roomCount++;
 
-        int targetX;
-        int targetY;
+//        int targetX;
+//        int targetY;
+//
+//        int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
+//        if (sortingHat == 0) { // bottom
+//            targetX = p.x + ((width+1)/2);
+//            targetY = p.y;
+//            world[targetX][targetY] = Tileset.FLOOR;
+//            world[targetX][targetY - 1] = Tileset.AVATAR;
+//        }
+//        else if (sortingHat == 1) { // top
+//            targetX = p.x+((width+1)/2);
+//            targetY = p.y + height + 1;
+//            world[targetX][targetY] = Tileset.FLOOR;
+//            world[targetX][targetY + 1] = Tileset.AVATAR;
+//        }
+//        else if (sortingHat == 2) { // left
+//            targetX = p.x;
+//            targetY = p.y + ((height+1)/2);
+//            world[targetX][targetY] = Tileset.FLOOR;
+//            world[targetX - 1][targetY] = Tileset.AVATAR;
+//        }
+//        else { // right
+//            targetX = p.x + width + 1;
+//            targetY = p.y + ((height+1)/2);
+//            world[targetX][targetY] = Tileset.FLOOR;
+//            world[targetX + 1][targetY] = Tileset.AVATAR;
+//        }
+//        roomList.add(new Position(targetX, targetY));
+    }
 
-        int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
-        if (sortingHat == 0) { // bottom
-            targetX = p.x + ((width+1)/2);
-            targetY = p.y;
-            world[targetX][targetY] = Tileset.FLOOR;
-            world[targetX][targetY - 1] = Tileset.AVATAR;
+    /*to make hallways:
+    * 1) make sure room has not been visited yet
+    * 2)
+    * makehallways: iterates through all rooms
+    * makehallway: makes one hallway
+     */
+
+    private int closestRoom(int room) {
+        //find the closest width and height to p.x and p.y. using distance formula, determine the closest room
+        //***** CLOSEST UNVISITED ROOM
+        Position roomPos = new Position(roomDict.get(room).get(0), roomDict.get(room).get(1));
+        List<Integer> pList = null;
+        List<Integer> qList = null;
+        List<Integer> distances = null;
+        // lol dummy integer to maintain integer return type
+        int poop = 0;
+        ArrayList<Integer> sortedDistances = new ArrayList<>(roomCount);
+        int minDistance;
+
+        for (int i = 0; i < roomCount; i++) {
+            if (visited.get(i) || room == 0) {
+                return poop += 0;
+            }
+            pList.add(roomDict.get(i).get(0));
+            qList.add(roomDict.get(i).get(1));
         }
-        else if (sortingHat == 1) { // top
-            targetX = p.x+((width+1)/2);
-            targetY = p.y + height + 1;
-            world[targetX][targetY] = Tileset.FLOOR;
-            world[targetX][targetY + 1] = Tileset.AVATAR;
+
+        for (int i = 0; i < roomCount; i++) {
+            distances.add(distance(roomPos, new Position(pList.get(i), qList.get(i))));
+            sortedDistances.add(distance(roomPos, new Position(pList.get(i), qList.get(i))));
         }
-        else if (sortingHat == 2) { // left
-            targetX = p.x;
-            targetY = p.y + ((height+1)/2);
-            world[targetX][targetY] = Tileset.FLOOR;
-            world[targetX - 1][targetY] = Tileset.AVATAR;
-        }
-        else { // right
-            targetX = p.x + width + 1;
-            targetY = p.y + ((height+1)/2);
-            world[targetX][targetY] = Tileset.FLOOR;
-            world[targetX + 1][targetY] = Tileset.AVATAR;
-        }
-        roomList.add(new Position(targetX, targetY));
+
+
+        sort(sortedDistances);
+        minDistance = sortedDistances.get(0);
+
+        assert distances != null;
+        return distances.indexOf(minDistance) + poop;
+    }
+
+    private int distance(Position p1, Position p2) {
+        return (int) sqrt(pow((p2.x + p1.x), 2) + pow((p2.y + p1.y), 2));
+    }
+
+    private void makeHallway(int room) {
+        int startX = (RANDOM.nextInt(roomDict.get(room).get(0) + roomDict.get(room).get(2)));
+        int startY = (RANDOM.nextInt(roomDict.get(room).get(1) + roomDict.get(room).get(3)));
+        Position hallStart = new Position(startX, startY);
+        int closestRoom;
+        Position hallDest;
     }
 
     private static void makeHallway(TETile[][] tiles, Position room1) {
@@ -117,17 +188,17 @@ public class World {
 
 
     public static void drawWorldTest(TETile[][] tiles) {
-//        for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH*HEIGHT); i++) {
-//            Position p = new Position(RANDOM.nextInt(3, WIDTH-3), RANDOM.nextInt(3, HEIGHT - 3));
-//            addRoom(tiles, p, RANDOM.nextInt(WIDTH/4), RANDOM.nextInt(HEIGHT/2));
-//            //pathExists(tiles);
-//        }
+        for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH*HEIGHT); i++) {
+            Position p = new Position(RANDOM.nextInt(3, WIDTH-3), RANDOM.nextInt(3, HEIGHT - 3));
+            addRoom(tiles, p, RANDOM.nextInt(WIDTH/4), RANDOM.nextInt(HEIGHT/2));
+            //pathExists(tiles);
+        }
 
-        Position p = new Position(10, 10);
-        addRoom(tiles, p, 2, 2);
-        Position p2 = new Position( 17, 17);
-        addRoom(tiles, p2, 2, 2);
-        makeHallway(tiles, roomList.get(0));
+//        Position p = new Position(10, 10);
+//        addRoom(tiles, p, 2, 2);
+//        Position p2 = new Position( 17, 17);
+//        addRoom(tiles, p2, 2, 2);
+//        makeHallway(tiles, roomList.get(0));
 //        Position p3 = new Position(30, 10);
 //        addRoom(tiles, p3, 2, 2);
     }
