@@ -87,8 +87,7 @@ public class World {
         }
 
         //keeping track of rooms
-        ArrayList<Integer> roomVal = new ArrayList<>(5);
-        roomVal.add(0);
+        ArrayList<Integer> roomVal = new ArrayList<>();
         roomVal.add(p.x);
         roomVal.add(p.y);
         roomVal.add(width);
@@ -154,17 +153,16 @@ public class World {
         //find the closest width and height to p.x and p.y. using distance formula, determine the closest room
         //***** CLOSEST UNVISITED ROOM
         Position roomPos = new Position(roomDict.get(room).get(0), roomDict.get(room).get(1));
-        List<Integer> pList = null;
-        List<Integer> qList = null;
-        List<Integer> distances = null;
+        List pList = new List;
+        List qList = new List;
+        List distances = new List;
         // lol dummy integer to maintain integer return type
-        int poop = 0;
-        ArrayList<Integer> sortedDistances = new ArrayList<>(roomCount);
+        ArrayList<Integer> sortedDistances = new ArrayList<>();
         int minDistance;
 
         for (int i = 0; i < roomCount; i++) {
             if (visited.get(i) || room == 0) {
-                return poop += 0;
+                break;
             }
             pList.add(roomX(i));
             qList.add(roomY(i));
@@ -179,8 +177,7 @@ public class World {
         sort(sortedDistances);
         minDistance = sortedDistances.get(0);
 
-        assert distances != null;
-        return distances.indexOf(minDistance) + poop;
+        return distances.indexOf(minDistance);
     }
 
     private static int distance(Position p1, Position p2) {
