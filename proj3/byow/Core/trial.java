@@ -22,7 +22,7 @@ public class trial {
 
         @Override
         public String toString() {
-            return "(" + x + ", " + y + ')';
+            return x+"|"+y;
         }
     }
     public static class Thing {
@@ -53,6 +53,7 @@ public class trial {
 
             // base case
             if (matrix == null || matrix.length == 0) {
+                System.out.println(path);
                 return path;
             }
 
@@ -78,6 +79,7 @@ public class trial {
                 // return if the destination is found
                 if (targetRoom.x == i && targetRoom.y == j) {
                     findPath(curr, path);
+                    System.out.println(path);
                     return path;
                 }
 
@@ -112,6 +114,7 @@ public class trial {
             }
 
             // we reach here if the path is not possible
+            System.out.println(path);
             return path;
         }
 

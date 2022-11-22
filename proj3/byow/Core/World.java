@@ -32,6 +32,19 @@ public class World {
     private static HashMap<Integer, ArrayList<Integer>> roomDict = new HashMap<>();
     private static ArrayList<Boolean> visited = new ArrayList<>(roomCount);
 
+    private static int roomX(int room) {
+        return roomDict.get(room).get(0);
+    }
+    private static int roomY(int room) {
+        return roomDict.get(room).get(1);
+    }
+    private static int roomWidth(int room) {
+        return roomDict.get(room).get(2);
+    }
+    private static int roomHeight(int room) {
+        return roomDict.get(room).get(3);
+    }
+
     /* key: room number (acc to roomcount)
 *  value: List(visited (0 = false and 1 = true), p.x, p.y, width, height)
 */
@@ -137,7 +150,7 @@ public class World {
     * makehallway: makes one hallway
      */
 
-    private int closestRoom(int room) {
+    public static int closestRoom(int room) {
         //find the closest width and height to p.x and p.y. using distance formula, determine the closest room
         //***** CLOSEST UNVISITED ROOM
         Position roomPos = new Position(roomDict.get(room).get(0), roomDict.get(room).get(1));
@@ -153,8 +166,8 @@ public class World {
             if (visited.get(i) || room == 0) {
                 return poop += 0;
             }
-            pList.add(roomDict.get(i).get(0));
-            qList.add(roomDict.get(i).get(1));
+            pList.add(roomX(i));
+            qList.add(roomY(i));
         }
 
         for (int i = 0; i < roomCount; i++) {
@@ -170,22 +183,32 @@ public class World {
         return distances.indexOf(minDistance) + poop;
     }
 
-    private int distance(Position p1, Position p2) {
+    private static int distance(Position p1, Position p2) {
         return (int) sqrt(pow((p2.x + p1.x), 2) + pow((p2.y + p1.y), 2));
     }
 
-    private void makeHallway(int room) {
-        int startX = (RANDOM.nextInt(roomDict.get(room).get(0) + roomDict.get(room).get(2)));
-        int startY = (RANDOM.nextInt(roomDict.get(room).get(1) + roomDict.get(room).get(3)));
-        Position hallStart = new Position(startX, startY);
-        int closestRoom;
-        Position hallDest;
+    private static void makeHallway(TETile[][] tiles, int room1, int closestRoom) {
+        //NEED TO MODIFY SO IT CHOOSES RANDOM TILE INSIDE OF ROOM
+        List<TETile> urmom = PositionList(tiles, trial.Thing.findPath(tiles, roomX(room1), roomY(room1), new Position(roomX(closestRoom), roomY(closestRoom))));
+        for (int i = 0; i < urmom.size(); i++) {
+            urmom.get(i) = Tileset.FLOWER;
+        }
     }
 
-    private static void makeHallway(TETile[][] tiles, Position room1) {
-        pathExists(tiles, new Node(room1.x, room1.y, xyTo1D(room1)));
+    private static List<TETile> PositionList(TETile[][] tiles, List findPath) {
+        // pass in world, coord of random floor tile
+        String bruh;
+        List<TETile> TETList = null;
+        for (int i = 0; i < findPath.size(); i++) {
+            bruh = findPath[i].split("|");  //fix the logic in this
+            TETList += TETile[bruh[0]][bruh[1]];
+        }
+        return TETList;
     }
 
+    public static void randomFloorTile(int room) {
+        EPIC BRUH MOMENT
+    }
 
     public static void drawWorldTest(TETile[][] tiles) {
         for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH*HEIGHT); i++) {
@@ -193,7 +216,6 @@ public class World {
             addRoom(tiles, p, RANDOM.nextInt(WIDTH/4), RANDOM.nextInt(HEIGHT/2));
             //pathExists(tiles);
         }
-
 //        Position p = new Position(10, 10);
 //        addRoom(tiles, p, 2, 2);
 //        Position p2 = new Position( 17, 17);
@@ -216,6 +238,7 @@ public class World {
             }
         }
         drawWorldTest(world);
+        trial.Thing.findPath(world, roomDict.get(0).get(0), roomDict.get(0).get(1), new Position(roomDict.get(1).get(0), roomDict.get(1).get(1)));
         ter.renderFrame(world);
     }
 }
