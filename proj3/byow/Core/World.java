@@ -4,6 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,6 @@ import java.util.Random;
 import static byow.Core.ShortestPath.pathExists;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import static java.util.Collections.min;
 import static java.util.Collections.sort;
 
 /**
@@ -46,7 +46,7 @@ public class World {
     }
 
     /* key: room number (acc to roomcount)
-*  value: List(visited (0 = false and 1 = true), p.x, p.y, width, height)
+*  value: List(p.x, p.y, width, height)
 */
 
     public static class Position {
@@ -152,17 +152,17 @@ public class World {
     public static int closestRoom(int room) {
         //find the closest width and height to p.x and p.y. using distance formula, determine the closest room
         //***** CLOSEST UNVISITED ROOM
-        Position roomPos = new Position(roomDict.get(room).get(0), roomDict.get(room).get(1));
-        List pList = new List;
-        List qList = new List;
-        List distances = new List;
+        Position roomPos = new Position(roomX(room), roomY(room));
+        ArrayList<Integer> pList = new ArrayList();
+        ArrayList<Integer> qList = new ArrayList();
+        ArrayList<Integer> distances = new ArrayList();
         // lol dummy integer to maintain integer return type
         ArrayList<Integer> sortedDistances = new ArrayList<>();
         int minDistance;
 
         for (int i = 0; i < roomCount; i++) {
             if (visited.get(i) || room == 0) {
-                break;
+                continue//account for get(i) and room 0 in your plist qlist heck yeah
             }
             pList.add(roomX(i));
             qList.add(roomY(i));
@@ -170,10 +170,9 @@ public class World {
 
         for (int i = 0; i < roomCount; i++) {
             distances.add(distance(roomPos, new Position(pList.get(i), qList.get(i))));
-            sortedDistances.add(distance(roomPos, new Position(pList.get(i), qList.get(i))));
         }
 
-
+        sortedDistances = new ArrayList<>(distances);
         sort(sortedDistances);
         minDistance = sortedDistances.get(0);
 
@@ -186,22 +185,14 @@ public class World {
 
     private static void makeHallway(TETile[][] tiles, int room1, int closestRoom) {
         //NEED TO MODIFY SO IT CHOOSES RANDOM TILE INSIDE OF ROOM
-        List<TETile> urmom = PositionList(tiles, trial.Thing.findPath(tiles, roomX(room1), roomY(room1), new Position(roomX(closestRoom), roomY(closestRoom))));
+        List<String> urmom = trial.Thing.findPath(tiles, roomX(room1), roomY(room1), new Position(roomX(closestRoom), roomY(closestRoom)));
+
         for (int i = 0; i < urmom.size(); i++) {
-            urmom.get(i) = Tileset.FLOWER;
+            int xcord = urmom.get(i).split(",").get(1);
         }
     }
 
-    private static List<TETile> PositionList(TETile[][] tiles, List findPath) {
-        // pass in world, coord of random floor tile
-        String bruh;
-        List<TETile> TETList = null;
-        for (int i = 0; i < findPath.size(); i++) {
-            bruh = findPath[i].split("|");  //fix the logic in this
-            TETList += TETile[bruh[0]][bruh[1]];
-        }
-        return TETList;
-    }
+
 
     public static void randomFloorTile(int room) {
         EPIC BRUH MOMENT
