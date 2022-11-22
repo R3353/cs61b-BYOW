@@ -118,5 +118,13 @@ public class trial {
             return path;
         }
 
+        public static void main(String[] args) {
+            List<String> thing = new ArrayList<>();
+            thing.add("(1, 2)");
+            System.out.println(thing);
+            String newthing = thing.get(0);
+            System.out.println(Integer.parseInt(String.valueOf(newthing.charAt(1))));
+            System.out.println(Integer.parseInt(String.valueOf(newthing.charAt(4))));
+        }
     }
 }

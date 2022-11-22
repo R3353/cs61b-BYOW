@@ -162,7 +162,7 @@ public class World {
 
         for (int i = 0; i < roomCount; i++) {
             if (visited.get(i) || room == 0) {
-                continue//account for get(i) and room 0 in your plist qlist heck yeah
+                continue; //account for get(i) and room 0 in your plist qlist heck yeah
             }
             pList.add(roomX(i));
             qList.add(roomY(i));
@@ -186,16 +186,18 @@ public class World {
     private static void makeHallway(TETile[][] tiles, int room1, int closestRoom) {
         //NEED TO MODIFY SO IT CHOOSES RANDOM TILE INSIDE OF ROOM
         List<String> urmom = trial.Thing.findPath(tiles, roomX(room1), roomY(room1), new Position(roomX(closestRoom), roomY(closestRoom)));
-
+        int xval;
+        int yval;
         for (int i = 0; i < urmom.size(); i++) {
-            int xcord = urmom.get(i).split(",").get(1);
+            xval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(1)));
+            yval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(1)));
         }
     }
 
 
 
     public static void randomFloorTile(int room) {
-        EPIC BRUH MOMENT
+        //EPIC BRUH MOMENT
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
