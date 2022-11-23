@@ -3,11 +3,9 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -24,29 +22,34 @@ public class World {
     private static final int maxWidth = WIDTH - 1;
     private static final int maxHeight = HEIGHT - 1;
 
-    private static final long SEED = 12345;
+    private static final long SEED = 3862345;
     private static final Random RANDOM = new Random(SEED);
 
     private static int roomCount = 0;
     private static HashMap<Integer, ArrayList<Integer>> roomDict = new HashMap<>();
     private static ArrayList<Boolean> visited = new ArrayList<>(roomCount);
+    private static WeightedQuickUnionUF wqu = new WeightedQuickUnionUF((WIDTH * HEIGHT) + 1);
+    private static ArrayList<Integer> floorList = new ArrayList<>();
 
     private static int roomX(int room) {
         return roomDict.get(room).get(0);
     }
+
     private static int roomY(int room) {
         return roomDict.get(room).get(1);
     }
+
     private static int roomWidth(int room) {
         return roomDict.get(room).get(2);
     }
+
     private static int roomHeight(int room) {
         return roomDict.get(room).get(3);
     }
 
     /* key: room number (acc to roomcount)
-*  value: List(p.x, p.y, width, height)
-*/
+     *  value: List(p.x, p.y, width, height)
+     */
 
     public static class Position {
         int x;
@@ -62,8 +65,13 @@ public class World {
         }
 
     }
+
     public static int xyTo1D(Position p) {
-        return (p.x * WIDTH) + p.y;
+        return (p.y * maxWidth) + p.x;
+    }
+
+    public static int xy1D(int x, int y) {
+        return (y * maxWidth) + x;
     }
 
     public static void addRoom(TETile[][] world, Position p, int width, int height) {
@@ -106,26 +114,28 @@ public class World {
             for (int j = 0; j < height; j++) {
                 Position t = p.shift(1, 1);
                 world[t.x + i][t.y + j] = Tileset.FLOOR;
+                wqu.union((WIDTH * HEIGHT), xy1D(t.x + i, t.y + j));
+                floorList.add(xy1D(t.x + i, t.y + i));
             }
         }
         roomCount++;
     }
 
     /*to make hallways:
-    * 1) make sure room has not been visited yet
-    * 2)
-    * makehallways: iterates through all rooms
-    * makehallway: makes one hallway
+     * 1) make sure room has not been visited yet
+     * 2)
+     * makehallways: iterates through all rooms
+     * makehallway: makes one hallway
      */
 
     public static int closestRoom(int room) {
         //find the closest width and height to p.x and p.y. using distance formula, determine the closest room. to
         // connect to a room, it must be unvisited
         Position roomPos = new Position(roomX(room), roomY(room));
-        ArrayList<Integer> pList = new ArrayList();
-        ArrayList<Integer> qList = new ArrayList();
-        ArrayList<Integer> distances = new ArrayList();
-        ArrayList<Integer> sortedDistances = new ArrayList<>();
+        ArrayList<Integer> pList = new ArrayList<>();
+        ArrayList<Integer> qList = new ArrayList<>();
+        ArrayList<Integer> distances = new ArrayList<>();
+        ArrayList<Integer> sortedDistances;
         int minDistance = 0;
 
         for (int i = 0; i < roomCount; i++) {
@@ -143,7 +153,7 @@ public class World {
         for (int bruh : sortedDistances) {
             if (bruh == 0) {
                 continue;
-            } else if (bruh != 0) {
+            } else {
                 minDistance = bruh;
             }
         }
@@ -163,13 +173,18 @@ public class World {
             xval = Integer.parseInt(s.split("\\D")[1]);
             yval = Integer.parseInt(s.split("\\D")[3]);
             tiles[xval][yval] = Tileset.FLOOR;
+            floorList.add(xy1D(xval, yval));
+            wqu.union(WIDTH * HEIGHT, xy1D(xval, yval));
             if (tiles[xval - 1][yval] == Tileset.NOTHING) {
                 tiles[xval - 1][yval] = Tileset.WALL;
-            } if (tiles[xval + 1][yval] == Tileset.NOTHING) {
+            }
+            if (tiles[xval + 1][yval] == Tileset.NOTHING) {
                 tiles[xval + 1][yval] = Tileset.WALL;
-            } if ((tiles[xval][yval - 1] == Tileset.NOTHING)) {
+            }
+            if ((tiles[xval][yval - 1] == Tileset.NOTHING)) {
                 tiles[xval][yval - 1] = Tileset.WALL;
-            } if ((tiles[xval][yval + 1] == Tileset.NOTHING)) {
+            }
+            if ((tiles[xval][yval + 1] == Tileset.NOTHING)) {
                 tiles[xval][yval + 1] = Tileset.WALL;
             }
         }
@@ -180,14 +195,21 @@ public class World {
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
-        for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH*HEIGHT); i++) {
-            Position p = new Position(RANDOM.nextInt(2, WIDTH-2), RANDOM.nextInt(2, HEIGHT - 2));
-            addRoom(tiles, p, RANDOM.nextInt(WIDTH/4), RANDOM.nextInt(HEIGHT/3));
+        for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH * HEIGHT); i++) {
+            Position p = new Position(RANDOM.nextInt(2, WIDTH - 2), RANDOM.nextInt(2, HEIGHT - 2));
+            addRoom(tiles, p, RANDOM.nextInt(WIDTH / 5), RANDOM.nextInt(HEIGHT / 2));
             //pathExists(tiles);
         }
         for (int i = 0; i < roomCount; i++) {
             makeHallway(tiles, i, closestRoom(i));
         }
+        int rnX = RANDOM.nextInt(WIDTH);
+        int rnY = RANDOM.nextInt(HEIGHT);
+        while(!floorList.contains(xy1D(rnX, rnY))) {
+            rnX = RANDOM.nextInt(WIDTH);
+            rnY = RANDOM.nextInt(HEIGHT);
+        }
+        tiles[rnX][rnY] = Tileset.AVATAR;
     }
 
     public static void main(String[] args) {
