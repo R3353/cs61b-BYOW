@@ -71,7 +71,7 @@ public class World {
         // would have to add 2 to the wall iteration to account for left and right wall
 
         // base cases
-        if (width < 1 || height < 1) {  //if width or height is less than or equal to 1
+        if (width <= 1 || height <= 1) {  //if width or height is less than or equal to 1
             return;
         }
         if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
@@ -109,36 +109,6 @@ public class World {
             }
         }
         roomCount++;
-
-//        int targetX;
-//        int targetY;
-//
-//        int sortingHat = RANDOM.nextInt(4); /** NEED TO MAKE SURE IT'S NOT CORNER. also make sure there is no opening where two rooms touch. */
-//        if (sortingHat == 0) { // bottom
-//            targetX = p.x + ((width+1)/2);
-//            targetY = p.y;
-//            world[targetX][targetY] = Tileset.FLOOR;
-//            world[targetX][targetY - 1] = Tileset.AVATAR;
-//        }
-//        else if (sortingHat == 1) { // top
-//            targetX = p.x+((width+1)/2);
-//            targetY = p.y + height + 1;
-//            world[targetX][targetY] = Tileset.FLOOR;
-//            world[targetX][targetY + 1] = Tileset.AVATAR;
-//        }
-//        else if (sortingHat == 2) { // left
-//            targetX = p.x;
-//            targetY = p.y + ((height+1)/2);
-//            world[targetX][targetY] = Tileset.FLOOR;
-//            world[targetX - 1][targetY] = Tileset.AVATAR;
-//        }
-//        else { // right
-//            targetX = p.x + width + 1;
-//            targetY = p.y + ((height+1)/2);
-//            world[targetX][targetY] = Tileset.FLOOR;
-//            world[targetX + 1][targetY] = Tileset.AVATAR;
-//        }
-//        roomList.add(new Position(targetX, targetY));
     }
 
     /*to make hallways:
@@ -159,10 +129,6 @@ public class World {
         int minDistance = 0;
 
         for (int i = 0; i < roomCount; i++) {
-//            if (visited.get(i) || room == 0) {
-//                pList.add(roomX(room));
-//                qList.add(roomY(room));
-//            }
             pList.add(roomX(i));
             qList.add(roomY(i));
         }
@@ -190,37 +156,38 @@ public class World {
     }
 
     private static void makeHallway(TETile[][] tiles, int room1, int RFTClosestRoom) {
-        //NEED TO MODIFY SO IT CHOOSES RANDOM TILE INSIDE OF ROOM
-        // if all rooms are visited, then yyyyyyur done
-        List<String> urmom = trial.Thing.findPath(tiles, RANDOM.nextInt(roomX(room1), roomWidth(room1)), RANDOM.nextInt(roomY(room1), roomHeight(room1)), randomFloorTile(RFTClosestRoom));
-        /**^^^^apparently not working bc "bound must be greater than origin. !!!!!!!!! what the FRICK!! */
+        List<String> urmom = trial.Thing.findPath(tiles, randomFloorTile(room1).x, randomFloorTile(room1).y, randomFloorTile(RFTClosestRoom));
         int xval;
         int yval;
-        for (int i = 0; i < urmom.size(); i++) {
-            xval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(1)));
-            yval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(4)));
-            tiles[xval][yval] = Tileset.FLOWER;
+        for (String s : urmom) {
+            xval = Integer.parseInt(s.split("\\D")[1]);
+            yval = Integer.parseInt(s.split("\\D")[3]);
+            tiles[xval][yval] = Tileset.FLOOR;
+            if (tiles[xval - 1][yval] == Tileset.NOTHING) {
+                tiles[xval - 1][yval] = Tileset.WALL;
+            } if (tiles[xval + 1][yval] == Tileset.NOTHING) {
+                tiles[xval + 1][yval] = Tileset.WALL;
+            } if ((tiles[xval][yval - 1] == Tileset.NOTHING)) {
+                tiles[xval][yval - 1] = Tileset.WALL;
+            } if ((tiles[xval][yval + 1] == Tileset.NOTHING)) {
+                tiles[xval][yval + 1] = Tileset.WALL;
+            }
         }
     }
 
     public static Position randomFloorTile(int room) {
-        //EPIC BRUH MOMENT
-        return new Position(RANDOM.nextInt(roomX(room), roomWidth(room)), RANDOM.nextInt(roomY(room), roomHeight(room)));
+        return new Position(RANDOM.nextInt(roomX(room), (roomX(room) + roomWidth(room))), RANDOM.nextInt(roomY(room), (roomY(room) + roomHeight(room))));
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
         for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH*HEIGHT); i++) {
-            Position p = new Position(RANDOM.nextInt(3, WIDTH-3), RANDOM.nextInt(3, HEIGHT - 3));
-            addRoom(tiles, p, RANDOM.nextInt(WIDTH/4), RANDOM.nextInt(HEIGHT/2));
+            Position p = new Position(RANDOM.nextInt(2, WIDTH-2), RANDOM.nextInt(2, HEIGHT - 2));
+            addRoom(tiles, p, RANDOM.nextInt(WIDTH/4), RANDOM.nextInt(HEIGHT/3));
             //pathExists(tiles);
         }
-//        Position p = new Position(10, 10);
-//        addRoom(tiles, p, 2, 2);
-//        Position p2 = new Position( 17, 17);
-//        addRoom(tiles, p2, 2, 2);
-//        makeHallway(tiles, roomList.get(0));
-//        Position p3 = new Position(30, 10);
-//        addRoom(tiles, p3, 2, 2);
+        for (int i = 0; i < roomCount; i++) {
+            makeHallway(tiles, i, closestRoom(i));
+        }
     }
 
     public static void main(String[] args) {
@@ -236,7 +203,6 @@ public class World {
             }
         }
         drawWorldTest(world);
-        makeHallway(world, 1, closestRoom(1));
         ter.renderFrame(world);
     }
 }

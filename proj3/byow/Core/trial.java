@@ -22,7 +22,7 @@ public class trial {
 
         @Override
         public String toString() {
-            return x+"|"+y;
+            return "(" + x + ", " + y + ")";
         }
     }
     public static class Thing {
@@ -53,7 +53,7 @@ public class trial {
 
             // base case
             if (matrix == null || matrix.length == 0) {
-                System.out.println(path);
+                //System.out.println(path);
                 return path;
             }
 
@@ -79,7 +79,7 @@ public class trial {
                 // return if the destination is found
                 if (targetRoom.x == i && targetRoom.y == j) {
                     findPath(curr, path);
-                    System.out.println(path);
+                    //System.out.println(path);
                     return path;
                 }
 
@@ -114,17 +114,17 @@ public class trial {
             }
 
             // we reach here if the path is not possible
-            System.out.println(path);
+            //System.out.println(path);
             return path;
         }
 
         public static void main(String[] args) {
             List<String> thing = new ArrayList<>();
-            thing.add("(1, 2)");
+            thing.add("(13, 23)");
             System.out.println(thing);
-            String newthing = thing.get(0);
-            System.out.println(Integer.parseInt(String.valueOf(newthing.charAt(1))));
-            System.out.println(Integer.parseInt(String.valueOf(newthing.charAt(4))));
+            System.out.println(thing.get(0).split("\\D")[1]);
+            System.out.println(thing.get(0).split("\\D")[3]);
+            System.out.println(Integer.parseInt(thing.get(0).split("\\D")[3]) == 23);
         }
     }
 }
