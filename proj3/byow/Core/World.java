@@ -4,15 +4,14 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import static byow.Core.ShortestPath.pathExists;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
 
 /**
@@ -150,20 +149,20 @@ public class World {
      */
 
     public static int closestRoom(int room) {
-        //find the closest width and height to p.x and p.y. using distance formula, determine the closest room
-        //***** CLOSEST UNVISITED ROOM
+        //find the closest width and height to p.x and p.y. using distance formula, determine the closest room. to
+        // connect to a room, it must be unvisited
         Position roomPos = new Position(roomX(room), roomY(room));
         ArrayList<Integer> pList = new ArrayList();
         ArrayList<Integer> qList = new ArrayList();
         ArrayList<Integer> distances = new ArrayList();
-        // lol dummy integer to maintain integer return type
         ArrayList<Integer> sortedDistances = new ArrayList<>();
-        int minDistance;
+        int minDistance = 0;
 
         for (int i = 0; i < roomCount; i++) {
-            if (visited.get(i) || room == 0) {
-                continue; //account for get(i) and room 0 in your plist qlist heck yeah
-            }
+//            if (visited.get(i) || room == 0) {
+//                pList.add(roomX(room));
+//                qList.add(roomY(room));
+//            }
             pList.add(roomX(i));
             qList.add(roomY(i));
         }
@@ -173,8 +172,15 @@ public class World {
         }
 
         sortedDistances = new ArrayList<>(distances);
-        sort(sortedDistances);
-        minDistance = sortedDistances.get(0);
+        sort(sortedDistances, reverseOrder());
+
+        for (int bruh : sortedDistances) {
+            if (bruh == 0) {
+                continue;
+            } else if (bruh != 0) {
+                minDistance = bruh;
+            }
+        }
 
         return distances.indexOf(minDistance);
     }
@@ -183,21 +189,23 @@ public class World {
         return (int) sqrt(pow((p2.x + p1.x), 2) + pow((p2.y + p1.y), 2));
     }
 
-    private static void makeHallway(TETile[][] tiles, int room1, int closestRoom) {
+    private static void makeHallway(TETile[][] tiles, int room1, int RFTClosestRoom) {
         //NEED TO MODIFY SO IT CHOOSES RANDOM TILE INSIDE OF ROOM
-        List<String> urmom = trial.Thing.findPath(tiles, roomX(room1), roomY(room1), new Position(roomX(closestRoom), roomY(closestRoom)));
+        // if all rooms are visited, then yyyyyyur done
+        List<String> urmom = trial.Thing.findPath(tiles, RANDOM.nextInt(roomX(room1), roomWidth(room1)), RANDOM.nextInt(roomY(room1), roomHeight(room1)), randomFloorTile(RFTClosestRoom));
+        /**^^^^apparently not working bc "bound must be greater than origin. !!!!!!!!! what the FRICK!! */
         int xval;
         int yval;
         for (int i = 0; i < urmom.size(); i++) {
             xval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(1)));
-            yval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(4)));
+            yval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(3)));
+            tiles[xval][yval] = Tileset.FLOWER;
         }
     }
 
-
-
-    public static void randomFloorTile(int room) {
+    public static Position randomFloorTile(int room) {
         //EPIC BRUH MOMENT
+        return new Position(RANDOM.nextInt(roomX(room), roomWidth(room)), RANDOM.nextInt(roomY(room), roomHeight(room)));
     }
 
     public static void drawWorldTest(TETile[][] tiles) {
@@ -228,7 +236,7 @@ public class World {
             }
         }
         drawWorldTest(world);
-        trial.Thing.findPath(world, roomDict.get(0).get(0), roomDict.get(0).get(1), new Position(roomDict.get(1).get(0), roomDict.get(1).get(1)));
+        makeHallway(world, 1, closestRoom(1));
         ter.renderFrame(world);
     }
 }
