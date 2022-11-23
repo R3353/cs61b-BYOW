@@ -190,7 +190,7 @@ public class World {
         int yval;
         for (int i = 0; i < urmom.size(); i++) {
             xval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(1)));
-            yval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(1)));
+            yval = Integer.parseInt(String.valueOf(urmom.get(i).charAt(4)));
         }
     }
 
