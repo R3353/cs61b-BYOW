@@ -1,6 +1,5 @@
 package byow.Core;
 import java.util.*;
-import byow.Core.World;
 import byow.TileEngine.TETile;
 
 public class trial {
@@ -27,8 +26,8 @@ public class trial {
     }
     public static class Thing {
         // Below arrays detail all four possible movements from a cell
-        private static int[] row = { -1, 0, 0, 1 };
-        private static int[] col = { 0, -1, 1, 0 };
+        private static int[] row = {-1, 0, 0, 1};
+        private static int[] col = {0, -1, 1, 0};
 
         // The function returns false if (x, y) is not a valid position
         private static boolean isValid(int x, int y) {
@@ -36,8 +35,7 @@ public class trial {
         }
 
         // Utility function to find path from source to destination
-        private static void findPath(Bode bode, List<String> path)
-        {
+        private static void findPath(Bode bode, List<String> path) {
             if (bode != null) {
                 findPath(bode.parent, path);
                 path.add(bode.toString());
@@ -46,8 +44,7 @@ public class trial {
 
         // Find the shortest route in a matrix from source cell (x, y) to
         // destination cell (N-1, N-1)
-        public static List<String> findPath(TETile[][] matrix, int x, int y, World.Position targetRoom)
-        {
+        public static List<String> findPath(TETile[][] matrix, int x, int y, World.Position targetRoom) {
             // list to store shortest path
             List<String> path = new ArrayList<>();
 
@@ -70,8 +67,7 @@ public class trial {
             visited.add(key);
 
             // loop till queue is empty
-            while (!q.isEmpty())
-            {
+            while (!q.isEmpty()) {
                 // dequeue front node and process it
                 Bode curr = q.poll();
                 int i = curr.x, j = curr.y;
@@ -87,24 +83,21 @@ public class trial {
 
                 // check all four possible movements from the current cell
                 // and recur for each valid movement
-                for (int k = 0; k < row.length; k++)
-                {
+                for (int k = 0; k < row.length; k++) {
                     // get next position coordinates using the value of the current cell
                     x = i + row[k];
                     y = j + col[k];
 
                     // check if it is possible to go to the next position
                     // from the current position
-                    if (isValid(x, y))
-                    {
+                    if (isValid(x, y)) {
                         // construct the next cell node
                         Bode next = new Bode(x, y, curr);
 
                         key = next.x + "," + next.y;
 
                         // if it isn't visited yet
-                        if (!visited.contains(key))
-                        {
+                        if (!visited.contains(key)) {
                             // enqueue it and mark it as visited
                             q.add(next);
                             visited.add(key);
@@ -116,15 +109,6 @@ public class trial {
             // we reach here if the path is not possible
             //System.out.println(path);
             return path;
-        }
-
-        public static void main(String[] args) {
-            List<String> thing = new ArrayList<>();
-            thing.add("(13, 23)");
-            System.out.println(thing);
-            System.out.println(thing.get(0).split("\\D")[1]);
-            System.out.println(thing.get(0).split("\\D")[3]);
-            System.out.println(Integer.parseInt(thing.get(0).split("\\D")[3]) == 23);
         }
     }
 }

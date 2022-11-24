@@ -22,30 +22,14 @@ public class World {
     private static final int maxWidth = WIDTH - 1;
     private static final int maxHeight = HEIGHT - 1;
 
-    private static final long SEED = 3862345;
-    private static final Random RANDOM = new Random(SEED);
+    private static long SEED;
+    private static Random RANDOM;
 
     private static int roomCount = 0;
     private static HashMap<Integer, ArrayList<Integer>> roomDict = new HashMap<>();
     private static ArrayList<Boolean> visited = new ArrayList<>(roomCount);
     private static WeightedQuickUnionUF wqu = new WeightedQuickUnionUF((WIDTH * HEIGHT) + 1);
     private static ArrayList<Integer> floorList = new ArrayList<>();
-
-    private static int roomX(int room) {
-        return roomDict.get(room).get(0);
-    }
-
-    private static int roomY(int room) {
-        return roomDict.get(room).get(1);
-    }
-
-    private static int roomWidth(int room) {
-        return roomDict.get(room).get(2);
-    }
-
-    private static int roomHeight(int room) {
-        return roomDict.get(room).get(3);
-    }
 
     /* key: room number (acc to roomcount)
      *  value: List(p.x, p.y, width, height)
@@ -59,24 +43,19 @@ public class World {
             this.x = x;
             this.y = y;
         }
-
         public Position shift(int dx, int dy) {
             return new Position(this.x + dx, this.y + dy);
         }
-
     }
 
     public static int xyTo1D(Position p) {
         return (p.y * maxWidth) + p.x;
     }
-
     public static int xy1D(int x, int y) {
         return (y * maxWidth) + x;
     }
 
     public static void addRoom(TETile[][] world, Position p, int width, int height) {
-        // p = top left wall tile, width and height = dimension of room.
-        // would have to add 2 to the wall iteration to account for left and right wall
 
         // base cases
         if (width <= 1 || height <= 1) {  //if width or height is less than or equal to 1
@@ -120,13 +99,22 @@ public class World {
         }
         roomCount++;
     }
+    private static int roomX(int room) {
+        return roomDict.get(room).get(0);
+    }
 
-    /*to make hallways:
-     * 1) make sure room has not been visited yet
-     * 2)
-     * makehallways: iterates through all rooms
-     * makehallway: makes one hallway
-     */
+    private static int roomY(int room) {
+        return roomDict.get(room).get(1);
+    }
+
+    private static int roomWidth(int room) {
+        return roomDict.get(room).get(2);
+    }
+
+    private static int roomHeight(int room) {
+        return roomDict.get(room).get(3);
+    }
+
 
     public static int closestRoom(int room) {
         //find the closest width and height to p.x and p.y. using distance formula, determine the closest room. to
@@ -157,7 +145,6 @@ public class World {
                 minDistance = bruh;
             }
         }
-
         return distances.indexOf(minDistance);
     }
 
@@ -197,8 +184,7 @@ public class World {
     public static void drawWorldTest(TETile[][] tiles) {
         for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH * HEIGHT); i++) {
             Position p = new Position(RANDOM.nextInt(2, WIDTH - 2), RANDOM.nextInt(2, HEIGHT - 2));
-            addRoom(tiles, p, RANDOM.nextInt(WIDTH / 5), RANDOM.nextInt(HEIGHT / 2));
-            //pathExists(tiles);
+            addRoom(tiles, p, RANDOM.nextInt(WIDTH / 5), RANDOM.nextInt(HEIGHT / 3));
         }
         for (int i = 0; i < roomCount; i++) {
             makeHallway(tiles, i, closestRoom(i));
@@ -212,7 +198,7 @@ public class World {
         tiles[rnX][rnY] = Tileset.AVATAR;
     }
 
-    public static void main(String[] args) {
+    public static TETile[][] main(long args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
@@ -224,7 +210,12 @@ public class World {
                 world[x][y] = Tileset.NOTHING;
             }
         }
+        SEED = args;
+        RANDOM = new Random(SEED);
         drawWorldTest(world);
         ter.renderFrame(world);
+        return world;
     }
 }
+//Changes made today: added so that seed is inputted through running the program, similar to lab12
+// implemented interactWithInputString()
