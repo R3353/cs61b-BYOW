@@ -47,9 +47,8 @@ public class Engine {
             char c = inputSource.getNextKey();
             inp.append(c);
         }
-        
-        long args = Long.parseLong(String.valueOf(inp));
-        TETile[][] finalWorldFrame = World.main(args);
-        return finalWorldFrame;
+        String[] args = new String[10];
+        args[0] = String.valueOf(inp);
+        return World.main(args);
     }
 }

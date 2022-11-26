@@ -198,7 +198,7 @@ public class World {
         tiles[rnX][rnY] = Tileset.AVATAR;
     }
 
-    public static TETile[][] main(long args) {
+    public static TETile[][] main(String[] args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
@@ -210,7 +210,7 @@ public class World {
                 world[x][y] = Tileset.NOTHING;
             }
         }
-        SEED = args;
+        SEED = Long.parseLong(args[0]);
         RANDOM = new Random(SEED);
         drawWorldTest(world);
         ter.renderFrame(world);
