@@ -30,6 +30,9 @@ public class World {
     private static ArrayList<Boolean> visited = new ArrayList<>(roomCount);
     private static WeightedQuickUnionUF wqu = new WeightedQuickUnionUF((WIDTH * HEIGHT) + 1);
     private static ArrayList<Integer> floorList = new ArrayList<>();
+    private static TETile[][] world;
+    private static int avatarX;
+    private static int avatarY;
 
     /* key: room number (acc to roomcount)
      *  value: List(p.x, p.y, width, height)
@@ -43,6 +46,7 @@ public class World {
             this.x = x;
             this.y = y;
         }
+
         public Position shift(int dx, int dy) {
             return new Position(this.x + dx, this.y + dy);
         }
@@ -51,11 +55,12 @@ public class World {
     public static int xyTo1D(Position p) {
         return (p.y * maxWidth) + p.x;
     }
+
     public static int xy1D(int x, int y) {
         return (y * maxWidth) + x;
     }
 
-    public static void addRoom(TETile[][] world, Position p, int width, int height) {
+    public static void addRoom(Position p, int width, int height) {
 
         // base cases
         if (width <= 1 || height <= 1) {  //if width or height is less than or equal to 1
@@ -99,6 +104,7 @@ public class World {
         }
         roomCount++;
     }
+
     private static int roomX(int room) {
         return roomDict.get(room).get(0);
     }
@@ -152,27 +158,27 @@ public class World {
         return (int) sqrt(pow((p2.x + p1.x), 2) + pow((p2.y + p1.y), 2));
     }
 
-    private static void makeHallway(TETile[][] tiles, int room1, int RFTClosestRoom) {
-        List<String> urmom = trial.Thing.findPath(tiles, randomFloorTile(room1).x, randomFloorTile(room1).y, randomFloorTile(RFTClosestRoom));
+    private static void makeHallway(int room1, int RFTClosestRoom) {
+        List<String> urmom = trial.Thing.findPath(world, randomFloorTile(room1).x, randomFloorTile(room1).y, randomFloorTile(RFTClosestRoom));
         int xval;
         int yval;
         for (String s : urmom) {
             xval = Integer.parseInt(s.split("\\D")[1]);
             yval = Integer.parseInt(s.split("\\D")[3]);
-            tiles[xval][yval] = Tileset.FLOOR;
+            world[xval][yval] = Tileset.FLOOR;
             floorList.add(xy1D(xval, yval));
             wqu.union(WIDTH * HEIGHT, xy1D(xval, yval));
-            if (tiles[xval - 1][yval] == Tileset.NOTHING) {
-                tiles[xval - 1][yval] = Tileset.WALL;
+            if (world[xval - 1][yval] == Tileset.NOTHING) {
+                world[xval - 1][yval] = Tileset.WALL;
             }
-            if (tiles[xval + 1][yval] == Tileset.NOTHING) {
-                tiles[xval + 1][yval] = Tileset.WALL;
+            if (world[xval + 1][yval] == Tileset.NOTHING) {
+                world[xval + 1][yval] = Tileset.WALL;
             }
-            if ((tiles[xval][yval - 1] == Tileset.NOTHING)) {
-                tiles[xval][yval - 1] = Tileset.WALL;
+            if ((world[xval][yval - 1] == Tileset.NOTHING)) {
+                world[xval][yval - 1] = Tileset.WALL;
             }
-            if ((tiles[xval][yval + 1] == Tileset.NOTHING)) {
-                tiles[xval][yval + 1] = Tileset.WALL;
+            if ((world[xval][yval + 1] == Tileset.NOTHING)) {
+                world[xval][yval + 1] = Tileset.WALL;
             }
         }
     }
@@ -181,21 +187,53 @@ public class World {
         return new Position(RANDOM.nextInt(roomX(room), (roomX(room) + roomWidth(room))), RANDOM.nextInt(roomY(room), (roomY(room) + roomHeight(room))));
     }
 
-    public static void drawWorldTest(TETile[][] tiles) {
+    public static void drawWorldTest() {
         for (int i = 0; i < RANDOM.nextInt(WIDTH, WIDTH * HEIGHT); i++) {
             Position p = new Position(RANDOM.nextInt(2, WIDTH - 2), RANDOM.nextInt(2, HEIGHT - 2));
-            addRoom(tiles, p, RANDOM.nextInt(WIDTH / 5), RANDOM.nextInt(HEIGHT / 3));
+            addRoom(p, RANDOM.nextInt(WIDTH / 5), RANDOM.nextInt(HEIGHT / 3));
         }
         for (int i = 0; i < roomCount; i++) {
-            makeHallway(tiles, i, closestRoom(i));
+            makeHallway(i, closestRoom(i));
         }
-        int rnX = RANDOM.nextInt(WIDTH);
-        int rnY = RANDOM.nextInt(HEIGHT);
-        while(!floorList.contains(xy1D(rnX, rnY))) {
-            rnX = RANDOM.nextInt(WIDTH);
-            rnY = RANDOM.nextInt(HEIGHT);
+        avatarX = RANDOM.nextInt(WIDTH);
+        avatarY = RANDOM.nextInt(HEIGHT);
+        while (!floorList.contains(xy1D(avatarX, avatarY))) {
+            avatarX = RANDOM.nextInt(WIDTH);
+            avatarY = RANDOM.nextInt(HEIGHT);
         }
-        tiles[rnX][rnY] = Tileset.AVATAR;
+        world[avatarX][avatarY] = Tileset.AVATAR;
+    }
+
+    public static void moveLeft() {
+        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+            world[avatarX][avatarY] = Tileset.FLOOR;
+            avatarX--;
+            world[avatarX][avatarY] = Tileset.AVATAR;
+        }
+    }
+
+    public static void moveRight() {
+        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+            world[avatarX][avatarY] = Tileset.FLOOR;
+            avatarX++;
+            world[avatarX][avatarY] = Tileset.AVATAR;
+        }
+    }
+
+    public static void moveUp() {
+        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+            world[avatarX][avatarY] = Tileset.FLOOR;
+            avatarY++;
+            world[avatarX][avatarY] = Tileset.AVATAR;
+        }
+    }
+
+    public static void moveDown() {
+        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+            world[avatarX][avatarY] = Tileset.FLOOR;
+            avatarY--;
+            world[avatarX][avatarY] = Tileset.AVATAR;
+        }
     }
 
     public static TETile[][] main(String[] args) {
@@ -204,15 +242,16 @@ public class World {
         ter.initialize(WIDTH, HEIGHT);
 
         // initialize tiles
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
+        world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
+
         SEED = Long.parseLong(args[0]);
         RANDOM = new Random(SEED);
-        drawWorldTest(world);
+        drawWorldTest();
         ter.renderFrame(world);
         return world;
     }
