@@ -239,6 +239,7 @@ public class World {
         if (gameStarted) {
             return;
         } else if (!gameStarted) {
+            /**@https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
     }
@@ -251,6 +252,7 @@ public class World {
             movement += newMovement;
             loadSeed();
             newMovement = "";
+            /**@https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
     }
@@ -364,8 +366,6 @@ public class World {
 
         SEED = Long.parseLong(args[0]);
         RANDOM = new Random(SEED);
-
-        drawWorld();
         ter.renderFrame(world);
         return world;
     }
