@@ -252,6 +252,9 @@ public class World {
         SEED = Long.parseLong(args[0]);
         RANDOM = new Random(SEED);
         drawWorldTest();
+        moveRight();
+        moveRight();
+        moveDown();
         ter.renderFrame(world);
         return world;
     }
