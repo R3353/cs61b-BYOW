@@ -217,7 +217,7 @@ public class World {
     /** --------------------------------------------------------------------------------------------------------*/
 
     private static void mainMenu() {
-        drawScreen(WIDTH / 2, HEIGHT * 2 / 3, "CS61B: THE GAME");
+        drawScreen(WIDTH / 2, (HEIGHT * 2) / 3, "CS61B: THE GAME");
         Font fontSmall = new Font("Monaco", Font.BOLD, 17);
         StdDraw.setFont(fontSmall);
         StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)\nLoad Game (L)\nQuit (Q)");
@@ -251,7 +251,7 @@ public class World {
             movement += newMovement;
             loadSeed();
             newMovement = "";
-            /**@https://www.geeksforgeeks.org/system-exit-in-java/ */
+            /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
     }
@@ -361,8 +361,6 @@ public class World {
                 world[x][y] = Tileset.NOTHING;
             }
         }
-
-
         SEED = Long.parseLong(args[0]);
         RANDOM = new Random(SEED);
         drawWorld();
