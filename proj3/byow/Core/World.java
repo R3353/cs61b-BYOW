@@ -5,7 +5,6 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.introcs.StdDraw;
-
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -37,7 +36,13 @@ public class World {
     private static int avatarX;
     private static int avatarY;
 
-    private static HashMap<Integer, ArrayList<String>> LoadSeed = new HashMap<>();
+    private static String loadedSeed = "";
+    private static String movement = "";
+    private static String newMovement = "";
+
+    private static boolean gameStarted = false;
+
+
 
     /* key: room number (acc to roomcount)
      *  value: List(p.x, p.y, width, height)
@@ -209,94 +214,100 @@ public class World {
         world[avatarX][avatarY] = Tileset.AVATAR;
     }
 
-    /** @lab12 */
-    public static void drawFrame(String s) {
+    /** --------------------------------------------------------------------------------------------------------*/
+
+    private static void mainMenu() {
+        drawScreen(WIDTH / 2, HEIGHT * 2 / 3, "CS61B: THE GAME");
+        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
+        StdDraw.setFont(fontSmall);
+        StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)\nLoad Game (L)\nQuit (Q)");
+    }
+
+    private static void newGame() {
+        StdDraw.clear(Color.BLACK);
+        drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
+        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\nQuit(Q)");
+        seedInput();
+        loadSeed();
+    }
+
+    private static void loadGame() {
+        //just loads up the previous game, so store the seed and movements.
+    }
+
+    private static void quitGame() {
+        if (gameStarted) {
+            return;
+        } else if (!gameStarted) {
+            System.exit(0);
+        }
+    }
+
+    private static void quitAndSaveGame() {
+        if (!gameStarted) {
+            return;
+        }
+        if (gameStarted) {
+            movement += newMovement;
+            loadSeed();
+            newMovement = "";
+            System.exit(0);
+        }
+    }
+
+    public static void mainMenuHandler() {
+        String input = "";
+        mainMenu();
+        if (StdDraw.nextKeyTyped() == 'n' || StdDraw.nextKeyTyped() == 'N') {
+            newGame();
+        } else if (StdDraw.nextKeyTyped() == 'l' || StdDraw.nextKeyTyped() == 'L') {
+            loadGame();
+        } else if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
+            quitGame();
+        }
+    }
+
+    public static void drawScreen(int width, int height, String s) {
         /* Take the input string S and display it at the center of the screen,
          * with the pen settings given below. */
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
         Font fontBig = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(fontBig);
-        StdDraw.text(WIDTH / 2, HEIGHT / 2, s);
+        StdDraw.text(width, height, s);
 
         StdDraw.show();
     }
 
-    public static String solicitCharsInput() {
-        String input = "";
-        drawFrame(input);
+    public static void drawScreen(int width, int height, Long s) {
+        /* Take the input string S and display it at the center of the screen,
+         * with the pen settings given below. */
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        Font fontBig = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(fontBig);
+        StdDraw.text(width, height, s);
+
+        StdDraw.show();
+    }
+
+    public static Long seedInput() {
+        Long input = Long.valueOf("");
+        drawScreen(WIDTH / 2, HEIGHT / 2, input);
 
         input += StdDraw.nextKeyTyped();
-        drawFrame(input);
-
-        StdDraw.pause(1000);
-        return input;
+        drawScreen(WIDTH / 2, HEIGHT / 2, input);
+        
+        SEED = input;
+        return SEED;
     }
 
-    public static void drawMainMenu(TETile world) {
-        //user input of N, L, or Q
-        StringBuilder selection = new StringBuilder();
-
-        //sets up main menu screen
-        StdDraw.setCanvasSize(WIDTH, HEIGHT);
-        Font font = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(font);
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
-        StdDraw.clear(Color.BLACK);
-        StdDraw.enableDoubleBuffering();
-
-        //text on main menu screen
-        StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
-        StdDraw.text(WIDTH / 2, HEIGHT * 2 / 3, "CS61B: THE GAME");
-
-        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
-        StdDraw.setFont(fontSmall);
-        StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)\nLoad Game (L)\nQuit (Q)");
-
-        //the action (might put this in a separate method)
-//        while (selection.length() < 1) {
-//            if (!StdDraw.hasNextKeyTyped()) {
-//                continue;
-//            }
-//
-//            selection.append(StdDraw.nextKeyTyped());
-//
-//            if (selection.toString().contains("n") || selection.toString().contains("N")) {
-//                return newGame(world);
-//            } else if (selection.toString().contains("l") || selection.toString().equals("L")) {
-//                return loadGame(world);
-//            } else if (selection.toString().equals("q") || selection.toString().equals("Q")) {
-//                return quit(world);
-//            }
-//        }
+    public static void loadSeed() {
+        loadedSeed = SEED + "," + movement;
     }
 
-    public static void newGame(TETile world) {
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
-        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
-        String playerInput = solicitCharsInput();
-        //input characters into string thingy and shows them on screen
-        if (playerInput.contains('s') || playerInput.contains('S')) {
-            //open up world with seed (prob do this after the line below this)
-            //save seed in HashMap called LoadSeed and keep key: seed; and value: arrayList of movements in that seed
-            //find a way to save the seed even after closing the window?
-            //make SEED = playerInput
-        }
-    }
+    /** --------------------------------------------------------------------------------------------------------*/
 
-    public static void loadGame() {
-        return;
-    }
-
-    public static void quit() {
-        return;
-    }
 
     public static void moveLeft() {
         if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
@@ -304,7 +315,7 @@ public class World {
             avatarX--;
             world[avatarX][avatarY] = Tileset.AVATAR;
         }
-        LoadSeed.get(SEED).add("a");
+        newMovement += "A";
     }
 
     public static void moveRight() {
@@ -313,7 +324,7 @@ public class World {
             avatarX++;
             world[avatarX][avatarY] = Tileset.AVATAR;
         }
-        LoadSeed.get(SEED).add("d");
+        newMovement += "D";
     }
 
     public static void moveUp() {
@@ -322,7 +333,7 @@ public class World {
             avatarY++;
             world[avatarX][avatarY] = Tileset.AVATAR;
         }
-        LoadSeed.get(SEED).add("w");
+        newMovement += "W";
     }
 
     public static void moveDown() {
@@ -331,8 +342,11 @@ public class World {
             avatarY--;
             world[avatarX][avatarY] = Tileset.AVATAR;
         }
-        LoadSeed.get(SEED).add("s");
+        newMovement += "S";
     }
+
+    /** --------------------------------------------------------------------------------------------------------*/
+
 
     public static TETile[][] main(String[] args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
