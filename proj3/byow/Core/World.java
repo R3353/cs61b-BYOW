@@ -297,7 +297,7 @@ public class World {
 
         input += StdDraw.nextKeyTyped();
         drawScreen(WIDTH / 2, HEIGHT / 2, input);
-        
+
         SEED = input;
         return SEED;
     }
