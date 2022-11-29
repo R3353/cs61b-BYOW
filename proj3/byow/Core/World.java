@@ -247,8 +247,7 @@ public class World {
     private static void quitAndSaveGame() {
         if (!gameStarted) {
             return;
-        }
-        if (gameStarted) {
+        } else if (gameStarted) {
             movement += newMovement;
             loadSeed();
             newMovement = "";
@@ -288,7 +287,7 @@ public class World {
         StdDraw.setPenColor(Color.WHITE);
         Font fontBig = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(fontBig);
-        StdDraw.text(width, height, s);
+        StdDraw.text(width, height, String.valueOf(s));
 
         StdDraw.show();
     }
@@ -366,6 +365,7 @@ public class World {
 
         SEED = Long.parseLong(args[0]);
         RANDOM = new Random(SEED);
+        drawWorld();
         ter.renderFrame(world);
         return world;
     }
