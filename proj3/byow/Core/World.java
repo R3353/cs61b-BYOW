@@ -216,20 +216,31 @@ public class World {
 
     /** --------------------------------------------------------------------------------------------------------*/
 
-    private static void mainMenu() {
-        drawScreen(WIDTH / 2, (HEIGHT * 2) / 3, "CS61B: THE GAME");
+    public static void mainMenu() {
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        Font fontBig = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(fontBig);
+        drawScreen(WIDTH / 2, HEIGHT / 2, "CS61B: THE GAME");
+        //StdDraw.pause(1000);
         Font fontSmall = new Font("Monaco", Font.BOLD, 17);
         StdDraw.setFont(fontSmall);
-        StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)\nLoad Game (L)\nQuit (Q)");
+        drawScreen((WIDTH / 2), (HEIGHT / 2) - 5, "New Game (N) \t Load Game (L) \t Quit (Q)");
     }
 
-    private static void newGame() {
+    public static void newGame() {
         StdDraw.clear(Color.BLACK);
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
         drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\nQuit(Q)");
-        seedInput();
-        loadSeed();
+//        seedInput();
+//        loadSeed();
     }
+
 
     private static void loadGame() {
         //just loads up the previous game, so store the seed and movements.
@@ -259,24 +270,25 @@ public class World {
     public static void mainMenuHandler() {
         String input = "";
         mainMenu();
-        if (StdDraw.nextKeyTyped() == 'n' || StdDraw.nextKeyTyped() == 'N') {
-            newGame();
-        } else if (StdDraw.nextKeyTyped() == 'l' || StdDraw.nextKeyTyped() == 'L') {
-            loadGame();
-        } else if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
-            quitGame();
+        while (StdDraw.hasNextKeyTyped()) {
+            if (StdDraw.nextKeyTyped() == 'n' || StdDraw.nextKeyTyped() == 'N') {
+                newGame();
+            } else if (StdDraw.nextKeyTyped() == 'l' || StdDraw.nextKeyTyped() == 'L') {
+                loadGame();
+            } else if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
+                quitGame();
+            }
         }
     }
 
     public static void drawScreen(int width, int height, String s) {
         /* Take the input string S and display it at the center of the screen,
          * with the pen settings given below. */
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
+//        StdDraw.clear(Color.BLACK);
+//        StdDraw.setPenColor(Color.WHITE);
+//        Font fontBig = new Font("Monaco", Font.BOLD, 30);
+//        StdDraw.setFont(fontBig);
         StdDraw.text(width, height, s);
-
         StdDraw.show();
     }
 

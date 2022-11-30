@@ -17,7 +17,7 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
-
+        World.mainMenu();
     }
 
     /**
