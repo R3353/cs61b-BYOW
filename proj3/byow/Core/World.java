@@ -240,7 +240,9 @@ public class World {
         seedInput();
         StdDraw.pause(1000);
         loadSeed();
+        StdDraw.clear(Color.BLACK);
         allowMovement();
+        StdDraw.clear(Color.BLACK);
     }
 
 
@@ -295,10 +297,6 @@ public class World {
         StdDraw.show();
     }
 
-    public static void listen(int n) {
-
-    }
-
     public static void drawScreen(int width, int height, Long s) {
         /* Take the input string S and display it at the center of the screen,
          * with the pen settings given below. */
@@ -316,7 +314,7 @@ public class World {
                 char something = StdDraw.nextKeyTyped();
                 if (something == 's' || something == 'S') {
                     break;
-                } else if (Character.isAlphabetic(something)) {
+                } else if (Character.isAlphabetic(something) || Character.isSpaceChar(something) || !Character.isDigit(something)) {
                     continue;
                 } else {
                     StdDraw.clear(Color.BLACK);
@@ -354,28 +352,23 @@ public class World {
     }
 
     public static void allowMovement() {
-        String input = "";
-        while(true) {
+        while (true) {
             if (StdDraw.hasNextKeyTyped()) {
-                char something = StdDraw.nextKeyTyped();
-                if (something == 'w' || something == 'W') {
+                char some = StdDraw.nextKeyTyped();
+                if (some == 'w' || some == 'W') {
                     moveUp();
-                    ter.renderFrame(world);
-                } else if (something == 'a' || something == 'A') {
+                } else if (some == 'a' || some == 'A') {
                     moveLeft();
-                    ter.renderFrame(world);
-                } else if (something == 'd' || something == 'D') {
+                } else if (some == 'd' || some == 'D') {
                     moveRight();
-                    ter.renderFrame(world);
-                } else if (something == 's' || something == 'S') {
+                } else if (some == 's' || some == 'S') {
                     moveDown();
-                    ter.renderFrame(world);
                 }
             }
         }
     }
 
-    /** --------------------------------------------------------------------------------------------------------*/
+    /** ----------------------------------------------------------------------------------*/
 
 
     public static void moveLeft() {
@@ -383,8 +376,8 @@ public class World {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX--;
             world[avatarX][avatarY] = Tileset.REESE;
+            ter.renderFrame(world);
         }
-        newMovement += "A";
     }
 
     public static void moveRight() {
@@ -392,8 +385,8 @@ public class World {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX++;
             world[avatarX][avatarY] = Tileset.REESE;
+            ter.renderFrame(world);
         }
-        newMovement += "D";
     }
 
     public static void moveUp() {
@@ -401,8 +394,8 @@ public class World {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY++;
             world[avatarX][avatarY] = Tileset.REESE;
+            ter.renderFrame(world);
         }
-        newMovement += "W";
     }
 
     public static void moveDown() {
@@ -410,8 +403,8 @@ public class World {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY--;
             world[avatarX][avatarY] = Tileset.REESE;
+            ter.renderFrame(world);
         }
-        newMovement += "S";
     }
 
     /** --------------------------------------------------------------------------------------------------------*/
