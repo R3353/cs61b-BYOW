@@ -251,7 +251,7 @@ public class World {
             movement += newMovement;
             loadSeed();
             newMovement = "";
-            /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
+            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
     }
