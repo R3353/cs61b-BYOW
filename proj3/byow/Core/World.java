@@ -41,6 +41,7 @@ public class World {
     private static String newMovement = "";
 
     private static boolean gameStarted = false;
+    public static TERenderer ter = new TERenderer();
 
 
 
@@ -211,28 +212,40 @@ public class World {
             avatarX = RANDOM.nextInt(WIDTH);
             avatarY = RANDOM.nextInt(HEIGHT);
         }
-        world[avatarX][avatarY] = Tileset.AVATAR;
+        world[avatarX][avatarY] = Tileset.REESE;
     }
 
     /** --------------------------------------------------------------------------------------------------------*/
 
-    private static void mainMenu() {
-        drawScreen(WIDTH / 2, (HEIGHT * 2) / 3, "CS61B: THE GAME");
-        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
-        StdDraw.setFont(fontSmall);
-        StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)\nLoad Game (L)\nQuit (Q)");
+    public static void mainMenu() {
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        bigFont();
+        drawScreen(WIDTH / 2, HEIGHT / 2, "CS61B: THE GAME");
+        smallFont();
+        drawScreen((WIDTH / 2), (HEIGHT / 2) - 5, "New Game (N) \t Load Game (L) \t Quit (Q)");
     }
 
-    private static void newGame() {
+    public static void newGame() {
         StdDraw.clear(Color.BLACK);
+        bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
-        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\nQuit(Q)");
+        smallFont();
+        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
         seedInput();
         loadSeed();
+        allowMovement();
     }
+
 
     private static void loadGame() {
         //just loads up the previous game, so store the seed and movements.
+
     }
 
     private static void quitGame() {
@@ -257,27 +270,32 @@ public class World {
     }
 
     public static void mainMenuHandler() {
-        String input = "";
         mainMenu();
-        if (StdDraw.nextKeyTyped() == 'n' || StdDraw.nextKeyTyped() == 'N') {
-            newGame();
-        } else if (StdDraw.nextKeyTyped() == 'l' || StdDraw.nextKeyTyped() == 'L') {
-            loadGame();
-        } else if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
-            quitGame();
+        String input = "";
+        while(input.length() < 1) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == 'n' || something == 'N') {
+                    input += something;
+                    newGame();
+                } else if (something == 'l' || something == 'L') {
+                    loadGame();
+                } else if (something == 'q' || something == 'Q') {
+                    quitGame();
+                }
+            }
         }
     }
 
     public static void drawScreen(int width, int height, String s) {
         /* Take the input string S and display it at the center of the screen,
          * with the pen settings given below. */
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
         StdDraw.text(width, height, s);
-
         StdDraw.show();
+    }
+
+    public static void listen(int n) {
+
     }
 
     public static void drawScreen(int width, int height, Long s) {
@@ -285,63 +303,110 @@ public class World {
          * with the pen settings given below. */
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
+        bigFont();
         StdDraw.text(width, height, String.valueOf(s));
-
         StdDraw.show();
     }
 
     public static Long seedInput() {
-        Long input = Long.valueOf("");
-        drawScreen(WIDTH / 2, HEIGHT / 2, input);
-
-        input += StdDraw.nextKeyTyped();
-        drawScreen(WIDTH / 2, HEIGHT / 2, input);
-
-        SEED = input;
+        String input = "";
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == 's' || something == 'S' || !Character.isDigit(something) ) {
+                    break;
+                } else {
+                    StdDraw.clear(Color.BLACK);
+                    bigFont();
+                    drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
+                    smallFont();
+                    drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
+                    input += something;
+                    drawScreen(WIDTH/2, HEIGHT/2, input);
+                }
+            }
+        }
+        StdDraw.clear(Color.BLACK);
+        bigFont();
+        drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "SEED ENTERED:");
+        smallFont();
+        drawScreen(WIDTH/2, HEIGHT/2, input);
+        SEED = Long.parseLong(input);
         return SEED;
     }
 
+    private static void bigFont() {
+        Font fontBig = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(fontBig);
+    }
+    private static void smallFont() {
+        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
+        StdDraw.setFont(fontSmall);
+    }
+
     public static void loadSeed() {
-        loadedSeed = SEED + "," + movement;
+        String ags[] = new String[10];
+        ags[0] = String.valueOf(SEED);
+        main(ags);
+    }
+
+    public static void allowMovement() {
+        String input = "";
+        while(true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == 'w' || something == 'W') {
+                    moveUp();
+                    ter.renderFrame(world);
+                } else if (something == 'a' || something == 'A') {
+                    moveLeft();
+                    ter.renderFrame(world);
+                } else if (something == 'd' || something == 'D') {
+                    moveRight();
+                    ter.renderFrame(world);
+                } else if (something == 's' || something == 'S') {
+                    moveDown();
+                    ter.renderFrame(world);
+                }
+            }
+        }
     }
 
     /** --------------------------------------------------------------------------------------------------------*/
 
 
     public static void moveLeft() {
-        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX--;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "A";
     }
 
     public static void moveRight() {
-        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX++;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "D";
     }
 
     public static void moveUp() {
-        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY++;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "W";
     }
 
     public static void moveDown() {
-        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY--;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "S";
     }
@@ -351,9 +416,7 @@ public class World {
 
     public static TETile[][] main(String[] args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-
         // initialize tiles
         world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
