@@ -41,6 +41,7 @@ public class World {
     private static String newMovement = "";
 
     private static boolean gameStarted = false;
+    public static TERenderer ter = new TERenderer();
 
 
 
@@ -224,30 +225,27 @@ public class World {
         StdDraw.enableDoubleBuffering();
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
+        bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2, "CS61B: THE GAME");
-        //StdDraw.pause(1000);
-        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
-        StdDraw.setFont(fontSmall);
+        smallFont();
         drawScreen((WIDTH / 2), (HEIGHT / 2) - 5, "New Game (N) \t Load Game (L) \t Quit (Q)");
     }
 
     public static void newGame() {
         StdDraw.clear(Color.BLACK);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
+        bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
-        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
-        StdDraw.setFont(fontSmall);
+        smallFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
-//        seedInput();
-//        loadSeed();
+        seedInput();
+        loadSeed();
+        allowMovement();
     }
 
 
     private static void loadGame() {
         //just loads up the previous game, so store the seed and movements.
+
     }
 
     private static void quitGame() {
@@ -272,10 +270,9 @@ public class World {
     }
 
     public static void mainMenuHandler() {
-        String input = "";
         mainMenu();
-//        String playerInput = StdDraw.solicitNCharsInput(1);
-        while (input.length() < 1) {
+        String input = "";
+        while(input.length() < 1) {
             if (StdDraw.hasNextKeyTyped()) {
                 char something = StdDraw.nextKeyTyped();
                 if (something == 'n' || something == 'N') {
@@ -293,12 +290,12 @@ public class World {
     public static void drawScreen(int width, int height, String s) {
         /* Take the input string S and display it at the center of the screen,
          * with the pen settings given below. */
-//        StdDraw.clear(Color.BLACK);
-//        StdDraw.setPenColor(Color.WHITE);
-//        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-//        StdDraw.setFont(fontBig);
         StdDraw.text(width, height, s);
         StdDraw.show();
+    }
+
+    public static void listen(int n) {
+
     }
 
     public static void drawScreen(int width, int height, Long s) {
@@ -306,26 +303,73 @@ public class World {
          * with the pen settings given below. */
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
-        Font fontBig = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(fontBig);
+        bigFont();
         StdDraw.text(width, height, String.valueOf(s));
-
         StdDraw.show();
     }
 
     public static Long seedInput() {
-        Long input = Long.valueOf("");
-        drawScreen(WIDTH / 2, HEIGHT / 2, input);
-
-        input += StdDraw.nextKeyTyped();
-        drawScreen(WIDTH / 2, HEIGHT / 2, input);
-
-        SEED = input;
+        String input = "";
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == 's' || something == 'S' || !Character.isDigit(something) ) {
+                    break;
+                } else {
+                    StdDraw.clear(Color.BLACK);
+                    bigFont();
+                    drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
+                    smallFont();
+                    drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
+                    input += something;
+                    drawScreen(WIDTH/2, HEIGHT/2, input);
+                }
+            }
+        }
+        StdDraw.clear(Color.BLACK);
+        bigFont();
+        drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "SEED ENTERED:");
+        smallFont();
+        drawScreen(WIDTH/2, HEIGHT/2, input);
+        SEED = Long.parseLong(input);
         return SEED;
     }
 
+    private static void bigFont() {
+        Font fontBig = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(fontBig);
+    }
+    private static void smallFont() {
+        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
+        StdDraw.setFont(fontSmall);
+    }
+
     public static void loadSeed() {
-        loadedSeed = SEED + "," + movement;
+        String ags[] = new String[10];
+        ags[0] = String.valueOf(SEED);
+        main(ags);
+    }
+
+    public static void allowMovement() {
+        String input = "";
+        while(true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == 'w' || something == 'W') {
+                    moveUp();
+                    ter.renderFrame(world);
+                } else if (something == 'a' || something == 'A') {
+                    moveLeft();
+                    ter.renderFrame(world);
+                } else if (something == 'd' || something == 'D') {
+                    moveRight();
+                    ter.renderFrame(world);
+                } else if (something == 's' || something == 'S') {
+                    moveDown();
+                    ter.renderFrame(world);
+                }
+            }
+        }
     }
 
     /** --------------------------------------------------------------------------------------------------------*/
@@ -372,9 +416,7 @@ public class World {
 
     public static TETile[][] main(String[] args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
-        TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
-
         // initialize tiles
         world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
