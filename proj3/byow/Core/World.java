@@ -211,7 +211,7 @@ public class World {
             avatarX = RANDOM.nextInt(WIDTH);
             avatarY = RANDOM.nextInt(HEIGHT);
         }
-        world[avatarX][avatarY] = Tileset.AVATAR;
+        world[avatarX][avatarY] = Tileset.REESE;
     }
 
     /** --------------------------------------------------------------------------------------------------------*/
@@ -235,8 +235,12 @@ public class World {
 
     public static void newGame() {
         StdDraw.clear(Color.BLACK);
+        Font fontBig = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(fontBig);
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
-        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\nQuit(Q)");
+        Font fontSmall = new Font("Monaco", Font.BOLD, 17);
+        StdDraw.setFont(fontSmall);
+        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
 //        seedInput();
 //        loadSeed();
     }
@@ -270,13 +274,18 @@ public class World {
     public static void mainMenuHandler() {
         String input = "";
         mainMenu();
-        while (StdDraw.hasNextKeyTyped()) {
-            if (StdDraw.nextKeyTyped() == 'n' || StdDraw.nextKeyTyped() == 'N') {
-                newGame();
-            } else if (StdDraw.nextKeyTyped() == 'l' || StdDraw.nextKeyTyped() == 'L') {
-                loadGame();
-            } else if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
-                quitGame();
+//        String playerInput = StdDraw.solicitNCharsInput(1);
+        while (input.length() < 1) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == 'n' || something == 'N') {
+                    input += something;
+                    newGame();
+                } else if (something == 'l' || something == 'L') {
+                    loadGame();
+                } else if (something == 'q' || something == 'Q') {
+                    quitGame();
+                }
             }
         }
     }
@@ -323,37 +332,37 @@ public class World {
 
 
     public static void moveLeft() {
-        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX--;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "A";
     }
 
     public static void moveRight() {
-        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX++;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "D";
     }
 
     public static void moveUp() {
-        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY++;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "W";
     }
 
     public static void moveDown() {
-        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.AVATAR) {
+        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY--;
-            world[avatarX][avatarY] = Tileset.AVATAR;
+            world[avatarX][avatarY] = Tileset.REESE;
         }
         newMovement += "S";
     }
