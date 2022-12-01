@@ -238,6 +238,7 @@ public class World {
         smallFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
         seedInput();
+        StdDraw.pause(1000);
         loadSeed();
         allowMovement();
     }
@@ -313,8 +314,10 @@ public class World {
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 char something = StdDraw.nextKeyTyped();
-                if (something == 's' || something == 'S' || !Character.isDigit(something) ) {
+                if (something == 's' || something == 'S') {
                     break;
+                } else if (Character.isAlphabetic(something)) {
+                    continue;
                 } else {
                     StdDraw.clear(Color.BLACK);
                     bigFont();
