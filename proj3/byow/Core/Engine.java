@@ -46,6 +46,7 @@ public class Engine {
         StringBuilder inp = new StringBuilder();
         while (inputSource.possibleNextInput()) {
             char c = inputSource.getNextKey();
+            System.out.println(c);
             inp.append(c);
         }
         String[] args = new String[10];

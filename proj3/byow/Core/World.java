@@ -6,6 +6,7 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -36,9 +37,9 @@ public class World {
     private static int avatarX;
     private static int avatarY;
 
-    private static String loadedSeed = "";
+    private static long loadedSeed;
     private static String movement = "";
-    private static String newMovement = "";
+    private static final ArrayList<String> newMovement = new ArrayList<>();
 
     private static boolean gameStarted = false;
     public static TERenderer ter = new TERenderer();
@@ -237,18 +238,29 @@ public class World {
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
         smallFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
-        seedInput();
+        SEED = seedInput();
         StdDraw.pause(1000);
-        loadSeed();
-        StdDraw.clear(Color.BLACK);
+        loadSeed(SEED);
+        //SEED = loadedSeed;
         allowMovement();
-        StdDraw.clear(Color.BLACK);
     }
 
 
     private static void loadGame() {
-        //just loads up the previous game, so store the seed and movements.
 
+    }
+
+    public static void doMovements(List<String> movementList) {
+        while (!movementList.isEmpty()) {
+            String some = movementList.get(0).toLowerCase();
+            switch (some) {
+                case "w" -> moveUp();
+                case "a" -> moveLeft();
+                case "d" -> moveRight();
+                case "s" -> moveDown();
+            }
+            movementList.remove(some);
+        }
     }
 
     private static void quitGame() {
@@ -265,8 +277,8 @@ public class World {
             return;
         } else if (gameStarted) {
             movement += newMovement;
-            loadSeed();
-            newMovement = "";
+//            loadSeed();
+//            newMovement = "";
             /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
@@ -282,8 +294,10 @@ public class World {
                     input += something;
                     newGame();
                 } else if (something == 'l' || something == 'L') {
+                    input += something;
                     loadGame();
                 } else if (something == 'q' || something == 'Q') {
+                    input += something;
                     quitGame();
                 }
             }
@@ -332,8 +346,8 @@ public class World {
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "SEED ENTERED:");
         smallFont();
         drawScreen(WIDTH/2, HEIGHT/2, input);
-        SEED = Long.parseLong(input);
-        return SEED;
+        Long seed = Long.parseLong(input);
+        return seed;
     }
 
     private static void bigFont() {
@@ -345,9 +359,9 @@ public class World {
         StdDraw.setFont(fontSmall);
     }
 
-    public static void loadSeed() {
+    public static void loadSeed(Long seed) {
         String ags[] = new String[10];
-        ags[0] = String.valueOf(SEED);
+        ags[0] = String.valueOf(seed);
         main(ags);
     }
 
@@ -357,13 +371,28 @@ public class World {
                 char some = StdDraw.nextKeyTyped();
                 if (some == 'w' || some == 'W') {
                     moveUp();
+                    movement = "w";
                 } else if (some == 'a' || some == 'A') {
                     moveLeft();
+                    movement = "a";
                 } else if (some == 'd' || some == 'D') {
                     moveRight();
+                    movement = "d";
                 } else if (some == 's' || some == 'S') {
                     moveDown();
+                    movement = "s";
+                } else if (some == ':') {
+                    while (!StdDraw.hasNextKeyTyped()) {
+                        continue;
+                    }
+                    if (StdDraw.nextKeyTyped() == 'q') {
+                        System.out.println(newMovement);
+                        quitGame();
+                    } else {
+                        continue;
+                    }
                 }
+                newMovement.add(movement);
             }
         }
     }
