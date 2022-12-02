@@ -270,7 +270,7 @@ public class World {
         }
     }
 
-    private static void quitGame() {
+    public static void quitGame() {
         if (gameStarted) {
             return;
         } else if (!gameStarted) {

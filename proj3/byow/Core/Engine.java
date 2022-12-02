@@ -4,6 +4,7 @@ import byow.InputDemo.InputSource;
 import byow.InputDemo.StringInputDevice;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.ArrayList;
 
@@ -61,6 +62,10 @@ public class Engine {
                 }
             } else if (Character.isAlphabetic(c)) {
                 weLikeToMoveItMoveIT.add(String.valueOf(c));
+            } else if (c == ':') {
+                if (inputSource.possibleNextInput() && Character.toLowerCase(inputSource.getNextKey()) == 'q') {
+                    break;
+                }
             }
         }
         returned = World.newGameString(Long.parseLong(String.valueOf(inp)));
