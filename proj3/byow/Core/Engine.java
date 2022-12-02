@@ -4,7 +4,6 @@ import byow.InputDemo.InputSource;
 import byow.InputDemo.StringInputDevice;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
-import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.ArrayList;
 
