@@ -5,6 +5,8 @@ import byow.InputDemo.StringInputDevice;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
+import java.util.ArrayList;
+
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -44,13 +46,25 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         InputSource inputSource = new StringInputDevice(input);
         StringBuilder inp = new StringBuilder();
+        TETile[][] returned = new TETile[0][];
+        ArrayList<String> weLikeToMoveItMoveIT = new ArrayList<>();
         while (inputSource.possibleNextInput()) {
-            char c = inputSource.getNextKey();
-            System.out.println(c);
-            inp.append(c);
+            char c = Character.toLowerCase(inputSource.getNextKey());
+            if (c == 'n') {
+                while (inputSource.possibleNextInput()) {
+                    char next = inputSource.getNextKey();
+                    if (Character.isDigit(next)) {
+                        inp.append(next);
+                    } else if (Character.toLowerCase(next) == 's') {
+                        break;
+                    }
+                }
+            } else if (Character.isAlphabetic(c)) {
+                weLikeToMoveItMoveIT.add(String.valueOf(c));
+            }
         }
-        String[] args = new String[10];
-        args[0] = String.valueOf(inp);
-        return World.main(args);
+        returned = World.newGameString(Long.parseLong(String.valueOf(inp)));
+        World.doMovements(weLikeToMoveItMoveIT);
+        return returned;
     }
 }

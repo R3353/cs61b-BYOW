@@ -5,8 +5,8 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.introcs.StdDraw;
+
 import java.awt.*;
-import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class World {
             return;
         }
         if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
-            return;                                                       // walls) is out of bounds of the window's
+            return;                                                       // walls is out of bounds of the window's
         }                                                                 // dimensions
         for (int i = 0; i < width + 3; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
             for (int j = 0; j < height + 3; j++) {
@@ -216,7 +216,9 @@ public class World {
         world[avatarX][avatarY] = Tileset.REESE;
     }
 
-    /** --------------------------------------------------------------------------------------------------------*/
+    /**
+     * --------------------------------------------------------------------------------------------------------
+     */
 
     public static void mainMenu() {
         StdDraw.clear(Color.BLACK);
@@ -243,6 +245,11 @@ public class World {
         loadSeed(SEED);
         //SEED = loadedSeed;
         allowMovement();
+    }
+
+    public static TETile[][] newGameString(Long seed) {
+        SEED = seed;
+        return loadSeed(seed);
     }
 
 
@@ -287,7 +294,7 @@ public class World {
     public static void mainMenuHandler() {
         mainMenu();
         String input = "";
-        while(input.length() < 1) {
+        while (input.length() < 1) {
             if (StdDraw.hasNextKeyTyped()) {
                 char something = StdDraw.nextKeyTyped();
                 if (something == 'n' || something == 'N') {
@@ -337,7 +344,7 @@ public class World {
                     smallFont();
                     drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
                     input += something;
-                    drawScreen(WIDTH/2, HEIGHT/2, input);
+                    drawScreen(WIDTH / 2, HEIGHT / 2, input);
                 }
             }
         }
@@ -345,7 +352,7 @@ public class World {
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "SEED ENTERED:");
         smallFont();
-        drawScreen(WIDTH/2, HEIGHT/2, input);
+        drawScreen(WIDTH / 2, HEIGHT / 2, input);
         Long seed = Long.parseLong(input);
         return seed;
     }
@@ -354,15 +361,16 @@ public class World {
         Font fontBig = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(fontBig);
     }
+
     private static void smallFont() {
         Font fontSmall = new Font("Monaco", Font.BOLD, 17);
         StdDraw.setFont(fontSmall);
     }
 
-    public static void loadSeed(Long seed) {
+    public static TETile[][] loadSeed(Long seed) {
         String ags[] = new String[10];
         ags[0] = String.valueOf(seed);
-        main(ags);
+        return main(ags);
     }
 
     public static void allowMovement() {
@@ -397,7 +405,9 @@ public class World {
         }
     }
 
-    /** ----------------------------------------------------------------------------------*/
+    /**
+     * ----------------------------------------------------------------------------------
+     */
 
 
     public static void moveLeft() {
@@ -436,7 +446,9 @@ public class World {
         }
     }
 
-    /** --------------------------------------------------------------------------------------------------------*/
+    /**
+     * --------------------------------------------------------------------------------------------------------
+     */
 
 
     public static TETile[][] main(String[] args) {
