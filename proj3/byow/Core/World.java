@@ -14,6 +14,7 @@ import static java.lang.Math.sqrt;
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
 
+
 /**
  * Draws a world that is mostly empty except for a small region.
  */
@@ -253,7 +254,7 @@ public class World {
         if (gameStarted) {
             return;
         } else if (!gameStarted) {
-            /**@https://www.geeksforgeeks.org/system-exit-in-java/ */
+            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
     }
@@ -415,7 +416,12 @@ public class World {
     }
 
     /** --------------------------------------------------------------------------------------------------------*/
+    // line of sight
+    fbgf
 
+    //change avatar before entering seed
+
+    /** --------------------------------------------------------------------------------------------------------*/
 
     public static TETile[][] main(String[] args) {
         // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
