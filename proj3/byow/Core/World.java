@@ -4,7 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-import edu.princeton.cs.introcs.StdDraw;
+import edu.princeton.cs.algs4.StdDraw;
 
 
 import java.awt.*;
@@ -486,6 +486,7 @@ public class World {
             avatarX--;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
+            //tileRender();
         }
     }
 
@@ -495,6 +496,7 @@ public class World {
             avatarX++;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
+            //tileRender();
         }
     }
 
@@ -504,6 +506,7 @@ public class World {
             avatarY++;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
+            //tileRender();
         }
     }
 
@@ -513,6 +516,7 @@ public class World {
             avatarY--;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
+            //tileRender();
         }
     }
 
@@ -535,6 +539,8 @@ public class World {
 
     }
     /** --------------------------------------------------------------------------------------------------------*/
+
+
 
 
     public static TETile[][] main(String[] args) {

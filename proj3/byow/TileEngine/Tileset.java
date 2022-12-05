@@ -15,6 +15,7 @@ import java.awt.Color;
  * The style checker may crash when you try to style check this file due to use of unicode
  * characters. This is OK.
  */
+//
 
 public class Tileset {
     public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you");
