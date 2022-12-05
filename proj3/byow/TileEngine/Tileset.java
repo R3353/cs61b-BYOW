@@ -33,7 +33,13 @@ public class Tileset {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
-    public static final TETile REESE = new TETile('ʊ', Color.green, Color.black, "heart");
+    public static final TETile REESE = new TETile('ʊ', Color.green, Color.black, "you");
+
+    public static final TETile WORM = new TETile('͠', Color.green, Color.black, "you");
+    public static final TETile SNOWMAN = new TETile('☃', Color.green, Color.black, "you");
+    public static final TETile MRMOON = new TETile('⏾', Color.green, Color.black, "you");
+    public static final TETile SMILEY = new TETile('☺', Color.green, Color.black, "you");
+
 }
 
 
