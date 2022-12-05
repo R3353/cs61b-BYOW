@@ -262,6 +262,7 @@ public class World {
     }
 
     public static void newGame() {
+        gameStarted = true;
         StdDraw.clear(Color.BLACK);
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
@@ -445,6 +446,7 @@ public class World {
 
     public static void allowMovement() {
         while (true) {
+            mouse();
             if (StdDraw.hasNextKeyTyped()) {
                 char some = StdDraw.nextKeyTyped();
                 if (some == 'w' || some == 'W') {
@@ -520,23 +522,30 @@ public class World {
         }
     }
 
-    /** --------------------------------------------------------------------------------------------------------*/
+    /**
+     * --------------------------------------------------------------------------------------------------------
+     *
+     * @return
+     */
     public static void mouse() {
+        StdDraw.clear(Color.BLACK);
+        ter.renderFrame(world);
+        Font fontSmall = new Font("Monaco", Font.BOLD, 10);
+        StdDraw.setFont(fontSmall);
+        StdDraw.setPenColor(Color.white);
         int mouseX = (int) StdDraw.mouseX();
         int mouseY = (int) StdDraw.mouseY();
-
-        if (mouseX < 0 || mouseX > WIDTH || mouseY < 0 || mouseY > HEIGHT) {
-            //return "nothing"
+        if (mouseX <= 0 || mouseX >= WIDTH || mouseY <= 0 || mouseY >= HEIGHT ) {
+            return;
         } else if (world[mouseX][mouseY] == Tileset.NOTHING) {
-            //return tileset.NOTHING.description
+            drawScreen(2, 25, Tileset.NOTHING.description());
         } else if (world[mouseX][mouseY] == Tileset.WALL) {
-            //return tileset.WALL.description
+            drawScreen(2, 25, Tileset.WALL.description());
         } else if (world[mouseX][mouseY] == Tileset.FLOOR) {
-            //return tileset.FLOOR.description
+            drawScreen(2, 25, Tileset.FLOOR.description());
         } else if (world[mouseX][mouseY] == avatar) {
-            //return avatar.description
+            drawScreen(2, 25, avatar.description());
         }
-
     }
     /** --------------------------------------------------------------------------------------------------------*/
 
