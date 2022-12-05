@@ -301,11 +301,12 @@ public class World {
         StdDraw.clear(Color.BLACK);
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT * 2 / 3, "CHOOSE AVATAR!");
-        drawScreen(WIDTH / 2, 17, "͠  Worm (1)");
-        drawScreen(WIDTH / 2, 16, "☃ Snowman (2)");
-        drawScreen(WIDTH / 2, 16, "⏾ Mr. Moon (3)");
-        drawScreen(WIDTH / 2, 16, "☺ Smiley (4)");
-        
+        drawScreen(WIDTH / 2, 17, "ʊ True Religion [DEFAULT] (0)")
+        drawScreen(WIDTH / 2, 16, "͠  Worm (1)");
+        drawScreen(WIDTH / 2, 15, "☃ Snowman (2)");
+        drawScreen(WIDTH / 2, 14, "⏾ Mr. Moon (3)");
+        drawScreen(WIDTH / 2, 13, "☺ Smiley (4)");
+
     }
 
     public static void chooseAvatar() {
@@ -313,6 +314,9 @@ public class World {
         while (input.length() < 1) {
             if (StdDraw.hasNextKeyTyped()) {
                 char something = StdDraw.nextKeyTyped();
+                if (something == '0') {
+                    input += something;
+                }
                 if (something == '1') {
                     input += something;
                     avatar = Tileset.WORM;
