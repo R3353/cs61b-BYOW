@@ -6,6 +6,7 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.introcs.StdDraw;
 
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -14,6 +15,9 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
+
+
+
 
 /**
  * Draws a world that is mostly empty except for a small region.
@@ -36,6 +40,7 @@ public class World {
     private static TETile[][] world;
     private static int avatarX;
     private static int avatarY;
+    private static TETile avatar = Tileset.REESE;
 
     private static long loadedSeed;
     private static String movement = "";
@@ -43,6 +48,8 @@ public class World {
 
     private static boolean gameStarted = false;
     public static TERenderer ter = new TERenderer();
+
+    public static boolean light = false;
 
 
 
@@ -213,12 +220,32 @@ public class World {
             avatarX = RANDOM.nextInt(WIDTH);
             avatarY = RANDOM.nextInt(HEIGHT);
         }
-        world[avatarX][avatarY] = Tileset.REESE;
+        world[avatarX][avatarY] = avatar;
     }
+
+//    public static void lights() {
+//        if (light) {
+//            return;
+//        } else if (!light) {
+//            for (int x = 0; x < WIDTH; x += 1) {
+//                for (int y = 0; y < HEIGHT; y += 1) {
+//                    if (x < avatarX - 3 && x > avatarX + 3 && y < avatarY - 3 && y > avatarY + 3) {
+//
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    public static void switcheroo() {
+//         //grr
+//    }
 
     /**
      * --------------------------------------------------------------------------------------------------------
      */
+
+    //change avatar
 
     public static void mainMenu() {
         StdDraw.clear(Color.BLACK);
@@ -231,7 +258,7 @@ public class World {
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2, "CS61B: THE GAME");
         smallFont();
-        drawScreen((WIDTH / 2), (HEIGHT / 2) - 5, "New Game (N) \t Load Game (L) \t Quit (Q)");
+        drawScreen((WIDTH / 2), (HEIGHT / 2) - 5, "New Game (N) \t Load Game (L) \t Change Avatar (A) \t Quit (Q)");
     }
 
     public static void newGame() {
@@ -270,15 +297,66 @@ public class World {
         }
     }
 
+    public static void chooseAvatarScreen() {
+        StdDraw.clear(Color.BLACK);
+        bigFont();
+        drawScreen(WIDTH / 2, HEIGHT * 2 / 3, "CHOOSE AVATAR!");
+        drawScreen(WIDTH / 2, 17, "ʊ True Religion [DEFAULT] (0)");
+        drawScreen(WIDTH / 2, 16, "͠  Worm (1)");
+        drawScreen(WIDTH / 2, 15, "☃ Snowman (2)");
+        drawScreen(WIDTH / 2, 14, "⏾ Mr. Moon (3)");
+        drawScreen(WIDTH / 2, 13, "☺ Smiley (4)");
+
+    }
+
+    public static void chooseAvatar() {
+        String input = "";
+        while (input.length() < 1) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char something = StdDraw.nextKeyTyped();
+                if (something == '0') {
+                    input += something;
+                }
+                if (something == '1') {
+                    input += something;
+                    avatar = Tileset.WORM;
+                } else if (something == '2') {
+                    input += something;
+                    avatar = Tileset.SNOWMAN;
+                } else if (something == '3') {
+                    input += something;
+                    avatar = Tileset.MRMOON;
+                }else if (something == '4') {
+                    input += something;
+                    avatar = Tileset.SMILEY;
+                }
+            }
+        }
+    }
+
     public static void quitGame() {
         if (gameStarted) {
             return;
         } else if (!gameStarted) {
-            /**@https://www.geeksforgeeks.org/system-exit-in-java/ */
+            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
             System.exit(0);
         }
     }
 
+    private static void quitAndSaveGame() {
+        if (!gameStarted) {
+            return;
+        } else if (gameStarted) {
+            //movement += newMovement;
+            //loadSeed();
+            //newMovement = "";
+            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
+//            loadSeed();
+//            newMovement = "";
+            /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
+            System.exit(0);
+        }
+    }
 
     public static void mainMenuHandler() {
         mainMenu();
@@ -292,7 +370,10 @@ public class World {
                 } else if (something == 'l' || something == 'L') {
                     input += something;
                     loadGame();
-                } else if (something == 'q' || something == 'Q') {
+                } else if (something == 'a' || something == 'A') {
+                    input += something;
+                    chooseAvatar();
+                }else if (something == 'q' || something == 'Q') {
                     input += something;
                     quitGame();
                 }
@@ -400,44 +481,60 @@ public class World {
 
 
     public static void moveLeft() {
-        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
+        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX--;
-            world[avatarX][avatarY] = Tileset.REESE;
+            world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
         }
     }
 
     public static void moveRight() {
-        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
+        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX++;
-            world[avatarX][avatarY] = Tileset.REESE;
+            world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
         }
     }
 
     public static void moveUp() {
-        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
+        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY++;
-            world[avatarX][avatarY] = Tileset.REESE;
+            world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
         }
     }
 
     public static void moveDown() {
-        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == Tileset.REESE) {
+        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY--;
-            world[avatarX][avatarY] = Tileset.REESE;
+            world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
         }
     }
 
-    /**
-     * --------------------------------------------------------------------------------------------------------
-     */
+    /** --------------------------------------------------------------------------------------------------------*/
+    public static void mouse() {
+        int mouseX = (int) StdDraw.mouseX();
+        int mouseY = (int) StdDraw.mouseY();
+
+        if (mouseX < 0 || mouseX > WIDTH || mouseY < 0 || mouseY > HEIGHT) {
+            //return "nothing"
+        } else if (world[mouseX][mouseY] == Tileset.NOTHING) {
+            //return tileset.NOTHING.description
+        } else if (world[mouseX][mouseY] == Tileset.WALL) {
+            //return tileset.WALL.description
+        } else if (world[mouseX][mouseY] == Tileset.FLOOR) {
+            //return tileset.FLOOR.description
+        } else if (world[mouseX][mouseY] == avatar) {
+            //return avatar.description
+        }
+
+    }
+    /** --------------------------------------------------------------------------------------------------------*/
 
 
     public static TETile[][] main(String[] args) {
