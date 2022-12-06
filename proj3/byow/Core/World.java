@@ -3,6 +3,8 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.Out;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 import edu.princeton.cs.algs4.StdDraw;
 
@@ -37,10 +39,14 @@ public class World {
     private static ArrayList<Boolean> visited = new ArrayList<>(roomCount);
     private static WeightedQuickUnionUF wqu = new WeightedQuickUnionUF((WIDTH * HEIGHT) + 1);
     private static ArrayList<Integer> floorList = new ArrayList<>();
+    private static ArrayList<Integer> wallList = new ArrayList<>();
     private static TETile[][] world;
     private static int avatarX;
     private static int avatarY;
+    private static int gateX;
+    private static int gateY;
     private static TETile avatar = Tileset.REESE;
+    private static TETile gate = Tileset.LOCKED_DOOR;
 
     private static long loadedSeed;
     private static String movement = "";
@@ -110,6 +116,7 @@ public class World {
             for (int j = 0; j < height + 2; j++) {
                 Position t = p.shift(i, j);
                 world[t.x][t.y] = Tileset.WALL;
+                wallList.add(xy1D(t.x, t.y));
             }
         }
 
@@ -189,15 +196,19 @@ public class World {
             wqu.union(WIDTH * HEIGHT, xy1D(xval, yval));
             if (world[xval - 1][yval] == Tileset.NOTHING) {
                 world[xval - 1][yval] = Tileset.WALL;
+                wallList.add(xy1D(xval-1, yval));
             }
             if (world[xval + 1][yval] == Tileset.NOTHING) {
                 world[xval + 1][yval] = Tileset.WALL;
+                wallList.add(xy1D(xval+1, yval));
             }
             if ((world[xval][yval - 1] == Tileset.NOTHING)) {
                 world[xval][yval - 1] = Tileset.WALL;
+                wallList.add(xy1D(xval, yval-1));
             }
             if ((world[xval][yval + 1] == Tileset.NOTHING)) {
                 world[xval][yval + 1] = Tileset.WALL;
+                wallList.add(xy1D(xval, yval+1));
             }
         }
     }
@@ -220,6 +231,16 @@ public class World {
             avatarX = RANDOM.nextInt(WIDTH);
             avatarY = RANDOM.nextInt(HEIGHT);
         }
+        gateX = RANDOM.nextInt(2,WIDTH);
+        gateY = RANDOM.nextInt(2, HEIGHT);
+        while (!wallList.contains(xy1D(gateX, gateY))) {
+            gateX = RANDOM.nextInt(2,WIDTH);
+            gateY = RANDOM.nextInt(2, HEIGHT);
+            if ((world[gateX+1][gateY] == Tileset.FLOOR || world[gateX-1][gateY] == Tileset.FLOOR || world[gateX][gateY-1] == Tileset.FLOOR || world[gateX][gateY+1] == Tileset.FLOOR) && (wallList.contains(xy1D(gateX, gateY)))){
+                break;
+            }
+        }
+        world[gateX][gateY] = gate;
         world[avatarX][avatarY] = avatar;
     }
 
@@ -292,6 +313,24 @@ public class World {
 //        Path file = Paths.get("the-file-name.txt");
 //        Files.write(file, lines, StandardCharsets.UTF_8);
 ////Files.write(file, lines, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+        In in = new In("./byow/Saves/saved-world");
+        if (in.isEmpty()) {
+            return;
+        } else {
+            Long seed = Long.parseLong(in.readLine());
+            String list = in.readLine();
+            String[] newList = list.split("");
+            List<String> movementList = new ArrayList<>();
+            for (String obj : newList) {
+                if (Objects.equals(obj, "[") || Objects.equals(obj, "]") || Objects.equals(obj, ",")) {
+                    continue;
+                }
+                movementList.add(obj);
+            }
+            loadSeed(seed);
+            doMovements(movementList);
+        }
+
     }
 
     public static void doMovements(List<String> movementList) {
@@ -372,28 +411,10 @@ public class World {
     }
 
     public static void quitGame() {
-        if (gameStarted) {
-            return;
-        } else if (!gameStarted) {
-            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
-            System.exit(0);
-        }
+        getOut(SEED, newMovement);
+        System.exit(0);
     }
 
-//    private static void quitAndSaveGame() {
-//        if (!gameStarted) {
-//            return;
-//        } else if (gameStarted) {
-//            //movement += newMovement;
-//            //loadSeed();
-//            //newMovement = "";
-//            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
-////            loadSeed();
-////            newMovement = "";
-//            /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
-//            System.exit(0);
-//        }
-//    }
 
     public static void mainMenuHandler() {
         mainMenu();
@@ -509,7 +530,7 @@ public class World {
                     }
                     if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
                         System.out.println(newMovement);
-                        System.exit(0);
+                        quitGame();
                     } else {
                         continue;
                     }
@@ -591,10 +612,18 @@ public class World {
         } else if (world[mouseX][mouseY] == avatar) {
             StdDraw.textRight(maxWidth, maxHeight, avatar.description());
             StdDraw.show();
+        } else if (world[mouseX][mouseY] == gate) {
+            StdDraw.textRight(maxWidth, maxHeight, gate.description());
+            StdDraw.show();
         }
     }
     /** --------------------------------------------------------------------------------------------------------*/
-
+    private static void getOut(Long seed, ArrayList movements) {
+        String expString = movements.toString();
+        Out exporter = new Out("./byow/Saves/saved-world");
+        exporter.println(seed);
+        exporter.println(expString);
+    }
 
 
 
