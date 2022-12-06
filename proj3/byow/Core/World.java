@@ -439,6 +439,9 @@ public class World {
         drawScreen(WIDTH / 2, 1, "U GOT DRIP!!!!!!!!");
         avatarSZ();
         drawScreen(WIDTH / 2, HEIGHT / 2, String.valueOf(avatar.character()));
+        smallFont();
+        StdDraw.textRight(maxWidth, 3, "Quit (Q)");
+        StdDraw.show();
     }
 
     public static void drawScreen(int width, int height, String s) {
