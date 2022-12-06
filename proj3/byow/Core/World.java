@@ -279,7 +279,7 @@ public class World {
         bigFont();
         drawScreen(WIDTH / 2, 17, "CS61B: THE GAME");
         smallFont();
-        drawScreen((WIDTH / 2), 13, "New Game (N) \t Load Game (L) \t Change Avatar (A) \t Quit (Q)");
+        drawScreen((WIDTH / 2), 13, "New Game (N) \t Load Game (L) \t Replay Game (R) \t Change Avatar (A) \t Quit (Q)");
     }
 
     public static void newGame() {
@@ -288,7 +288,7 @@ public class World {
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
         smallFont();
-        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
+        drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tBack (B)");
         SEED = seedInput();
         StdDraw.pause(2000);
         loadSeed(SEED);
@@ -463,6 +463,8 @@ public class World {
                 char something = StdDraw.nextKeyTyped();
                 if (something == 's' || something == 'S') {
                     break;
+                } else if (something == 'b' || something == 'B') {
+                    mainMenuHandler();
                 } else if (Character.isAlphabetic(something) || Character.isSpaceChar(something) || !Character.isDigit(something)) {
                     continue;
                 } else {
@@ -470,7 +472,7 @@ public class World {
                     bigFont();
                     drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
                     smallFont();
-                    drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
+                    drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tBack (B)");
                     input += something;
                     drawScreen(WIDTH / 2, HEIGHT / 2, input);
                 }
