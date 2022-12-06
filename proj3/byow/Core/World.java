@@ -38,6 +38,7 @@ public class World {
     private static int gateY;
     private static TETile avatar = Tileset.REESE;
     private static TETile gate = Tileset.LOCKED_DOOR;
+    private static Out exporter;
 
     private static String movement = "";
     private static final ArrayList<String> newMovement = new ArrayList<>();
@@ -222,7 +223,6 @@ public class World {
         while (true) {
             if (world[gateX][gateY] == Tileset.WALL) {
                 if ((world[gateX + 1][gateY] == Tileset.FLOOR || world[gateX - 1][gateY] == Tileset.FLOOR || world[gateX][gateY - 1] == Tileset.FLOOR || world[gateX][gateY + 1] == Tileset.FLOOR)) {
-                    world[gateX][gateY] = gate;
                     break;
                 }
             }
@@ -438,10 +438,20 @@ public class World {
         drawScreen(WIDTH / 2, 29, "LETS GOOOOOOOOOOOOOOOOO");
         drawScreen(WIDTH / 2, 1, "U GOT DRIP!!!!!!!!");
         avatarSZ();
-        drawScreen(WIDTH / 2, HEIGHT / 2, String.valueOf(avatar.character()));
+        StdDraw.setPenColor(Color.red);
+        drawScreen(WIDTH / 2, HEIGHT / 2, "ඞ්");
         smallFont();
+        StdDraw.setPenColor(Color.cyan);
         StdDraw.textRight(maxWidth, 3, "Quit (Q)");
         StdDraw.show();
+        while(true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char some = StdDraw.nextKeyTyped();
+                if (Character.toLowerCase(some) == 'q') {
+                    System.exit(0);
+                }
+            }
+        }
     }
 
     public static void drawScreen(int width, int height, String s) {
@@ -454,7 +464,7 @@ public class World {
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 char something = Character.toLowerCase(StdDraw.nextKeyTyped());
-                if (something == 's' && input.length() > 1) {
+                if (something == 's' && input.length() >= 1) {
                     break;
                 } else if (something == 'b') {
                     mainMenuHandler();
@@ -496,7 +506,7 @@ public class World {
     }
 
     private static void avatarSZ() {
-        Font yeetyah = new Font("Monaco", Font.BOLD, 100);
+        Font yeetyah = new Font("Monaco", Font.BOLD, 300);
         StdDraw.setFont(yeetyah);
     }
 
@@ -540,8 +550,15 @@ public class World {
         }
     }
 
+    public static boolean gameWon(int x, int y) {
+        return (gateX == x && gateY == y);
+    }
+
     public static void moveLeft() {
-        if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
+        if ((world[avatarX - 1][avatarY] == Tileset.FLOOR || (avatarY == gateY && avatarX-1 == gateX)) && world[avatarX][avatarY] == avatar ) {
+            if (gameWon(avatarX-1, avatarY)) {
+                endScreen();
+            }
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX--;
             world[avatarX][avatarY] = avatar;
@@ -550,7 +567,10 @@ public class World {
     }
 
     public static void moveRight() {
-        if (world[avatarX + 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
+        if ((world[avatarX + 1][avatarY] == Tileset.FLOOR || (avatarY == gateY && avatarX+1 == gateX)) && world[avatarX][avatarY] == avatar) {
+            if (gameWon(avatarX+1, avatarY)) {
+                endScreen();
+            }
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX++;
             world[avatarX][avatarY] = avatar;
@@ -559,7 +579,10 @@ public class World {
     }
 
     public static void moveUp() {
-        if (world[avatarX][avatarY + 1] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
+        if ((world[avatarX][avatarY + 1] == Tileset.FLOOR || (avatarY+1 == gateY && avatarX == gateX)) && world[avatarX][avatarY] == avatar) {
+            if (gameWon(avatarX, avatarY+1)) {
+                endScreen();
+            }
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY++;
             world[avatarX][avatarY] = avatar;
@@ -568,7 +591,10 @@ public class World {
     }
 
     public static void moveDown() {
-        if (world[avatarX][avatarY - 1] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
+        if ((world[avatarX][avatarY - 1] == Tileset.FLOOR || (avatarY-1 == gateY && avatarX == gateX)) && world[avatarX][avatarY] == avatar) {
+            if (gameWon(avatarX, avatarY-1)) {
+                endScreen();
+            }
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarY--;
             world[avatarX][avatarY] = avatar;
@@ -609,7 +635,7 @@ public class World {
 
     private static void getOut(Long seed) {
         String expString = World.newMovement.toString();
-        Out exporter = new Out("./byow/Saves/saved-world");
+        exporter = new Out("./byow/Saves/saved-world");
         exporter.println(seed);
         exporter.println(expString);
     }
