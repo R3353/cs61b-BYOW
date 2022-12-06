@@ -8,7 +8,6 @@ import edu.princeton.cs.algs4.*;
 
 import java.awt.*;
 import java.util.*;
-import java.util.Date;
 import java.util.List;
 
 import static java.lang.Math.pow;
@@ -160,11 +159,9 @@ public class World {
 
     private static void makeHallway(int room1, int RFTClosestRoom) {
         List<String> urmom = trial.Thing.findPath(world, randomFloorTile(room1).x, randomFloorTile(room1).y, randomFloorTile(RFTClosestRoom));
-        int xval;
-        int yval;
         for (String s : urmom) {
-            xval = Integer.parseInt(s.split("\\D")[1]);
-            yval = Integer.parseInt(s.split("\\D")[3]);
+            int xval = Integer.parseInt(s.split("\\D")[1]);
+            int yval = Integer.parseInt(s.split("\\D")[3]);
             world[xval][yval] = Tileset.FLOOR;
             floorList.add(xy1D(xval, yval));
             if (wallList.contains(xy1D(xval, yval))) {
@@ -173,30 +170,30 @@ public class World {
             wqu.union(WIDTH * HEIGHT, xy1D(xval, yval));
             if (world[xval - 1][yval] == Tileset.NOTHING) {
                 world[xval - 1][yval] = Tileset.WALL;
-                wallList.add(xy1D(xval-1, yval));
-                if (floorList.contains( xy1D(xval-1, yval))) {
-                    floorList.remove((Object)xy1D(xval-1, yval));
+                wallList.add(xy1D(xval - 1, yval));
+                if (floorList.contains(xy1D(xval - 1, yval))) {
+                    floorList.remove((Object) xy1D(xval - 1, yval));
                 }
             }
             if (world[xval + 1][yval] == Tileset.NOTHING) {
                 world[xval + 1][yval] = Tileset.WALL;
-                wallList.add(xy1D(xval+1, yval));
-                if (floorList.contains(xy1D(xval+1, yval))) {
-                    floorList.remove((Object)xy1D(xval+1, yval));
+                wallList.add(xy1D(xval + 1, yval));
+                if (floorList.contains(xy1D(xval + 1, yval))) {
+                    floorList.remove((Object) xy1D(xval + 1, yval));
                 }
             }
             if ((world[xval][yval - 1] == Tileset.NOTHING)) {
                 world[xval][yval - 1] = Tileset.WALL;
-                wallList.add(xy1D(xval, yval-1));
-                if (floorList.contains( xy1D(xval, yval-1))) {
-                    floorList.remove((Object)xy1D(xval, yval-1));
+                wallList.add(xy1D(xval, yval - 1));
+                if (floorList.contains(xy1D(xval, yval - 1))) {
+                    floorList.remove((Object) xy1D(xval, yval - 1));
                 }
             }
             if ((world[xval][yval + 1] == Tileset.NOTHING)) {
                 world[xval][yval + 1] = Tileset.WALL;
-                wallList.add(xy1D(xval, yval+1));
-                if (floorList.contains( xy1D(xval, yval+1))) {
-                    floorList.remove((Object)xy1D(xval, yval+1));
+                wallList.add(xy1D(xval, yval + 1));
+                if (floorList.contains(xy1D(xval, yval + 1))) {
+                    floorList.remove((Object) xy1D(xval, yval + 1));
                 }
             }
         }
@@ -220,16 +217,16 @@ public class World {
             avatarX = RANDOM.nextInt(WIDTH);
             avatarY = RANDOM.nextInt(HEIGHT);
         }
-        gateX = RANDOM.nextInt(2,WIDTH);
+        gateX = RANDOM.nextInt(2, WIDTH);
         gateY = RANDOM.nextInt(2, HEIGHT);
         while (true) {
             if (world[gateX][gateY] == Tileset.WALL) {
-                if ((world[gateX+1][gateY] == Tileset.FLOOR || world[gateX-1][gateY] == Tileset.FLOOR || world[gateX][gateY-1] == Tileset.FLOOR || world[gateX][gateY+1] == Tileset.FLOOR)) {
+                if ((world[gateX + 1][gateY] == Tileset.FLOOR || world[gateX - 1][gateY] == Tileset.FLOOR || world[gateX][gateY - 1] == Tileset.FLOOR || world[gateX][gateY + 1] == Tileset.FLOOR)) {
                     world[gateX][gateY] = gate;
                     break;
                 }
             }
-            gateX = RANDOM.nextInt(2,WIDTH);
+            gateX = RANDOM.nextInt(2, WIDTH);
             gateY = RANDOM.nextInt(2, HEIGHT);
         }
         world[gateX][gateY] = gate;
@@ -332,7 +329,7 @@ public class World {
                 } else if (something == '4') {
                     input += 4;
                     avatar = Tileset.MRMOON;
-                }else if (something == '5') {
+                } else if (something == '5') {
                     input += 5;
                     avatar = Tileset.SMILEY;
                 }
@@ -370,7 +367,6 @@ public class World {
         System.exit(0);
     }
 
-
     public static void mainMenuHandler() {
         mainMenu();
         String input = "";
@@ -386,7 +382,7 @@ public class World {
                 } else if (something == 'a') {
                     input += something;
                     chooseAvatarScreen();
-                }else if (something == 'q') {
+                } else if (something == 'q') {
                     input += something;
                     quitGame();
                 } else if (something == 'r') {
@@ -568,9 +564,9 @@ public class World {
         StdDraw.setPenColor(Color.white);
         int mouseX = (int) StdDraw.mouseX();
         int mouseY = (int) StdDraw.mouseY();
-        StdDraw.textLeft(WIDTH/2, maxHeight, String.valueOf(date));
+        StdDraw.textLeft(WIDTH / 2, maxHeight, String.valueOf(date));
         StdDraw.show();
-        if (mouseX <= 0 || mouseX >= maxWidth || mouseY <= 0 || mouseY >= maxHeight ) {
+        if (mouseX <= 0 || mouseX >= maxWidth || mouseY <= 0 || mouseY >= maxHeight) {
             return;
         } else if (world[mouseX][mouseY] == Tileset.NOTHING) {
             StdDraw.textRight(maxWidth, maxHeight, "THE VOID.™");
