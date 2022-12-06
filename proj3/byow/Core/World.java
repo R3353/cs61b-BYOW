@@ -3,14 +3,12 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Out;
-import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.*;
 
 
 import java.awt.*;
 import java.util.*;
+import java.util.Date;
 import java.util.List;
 
 import static java.lang.Math.pow;
@@ -18,12 +16,6 @@ import static java.lang.Math.sqrt;
 import static java.util.Collections.reverseOrder;
 import static java.util.Collections.sort;
 
-
-
-
-/**
- * Draws a world that is mostly empty except for a small region.
- */
 public class World {
 
     private static final int WIDTH = 60;
@@ -48,20 +40,10 @@ public class World {
     private static TETile avatar = Tileset.REESE;
     private static TETile gate = Tileset.LOCKED_DOOR;
 
-    private static long loadedSeed;
     private static String movement = "";
     private static final ArrayList<String> newMovement = new ArrayList<>();
 
-    private static boolean gameStarted = false;
     public static TERenderer ter = new TERenderer();
-
-    public static boolean light = false;
-
-
-
-    /* key: room number (acc to roomcount)
-     *  value: List(p.x, p.y, width, height)
-     */
 
     public static class Position {
         int x;
@@ -77,10 +59,6 @@ public class World {
         }
     }
 
-    public static int xyTo1D(Position p) {
-        return (p.y * maxWidth) + p.x;
-    }
-
     public static int xy1D(int x, int y) {
         return (y * maxWidth) + x;
     }
@@ -88,13 +66,13 @@ public class World {
     public static void addRoom(Position p, int width, int height) {
 
         // base cases
-        if (width <= 1 || height <= 1) {  //if width or height is less than or equal to 1
+        if (width <= 1 || height <= 1) {
             return;
         }
-        if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) { // if the dimension of the room (including
-            return;                                                       // walls is out of bounds of the window's
-        }                                                                 // dimensions
-        for (int i = 0; i < width + 3; i++) {   //check if there is space for this room to be made (if where the room would be all = Tileset.NOTHING
+        if (p.x + width + 2 > maxWidth || p.y + height + 2 > maxHeight) {
+            return;
+        }
+        for (int i = 0; i < width + 3; i++) {
             for (int j = 0; j < height + 3; j++) {
                 if (world[p.x + i][p.y + j] != Tileset.NOTHING) {
                     return;
@@ -102,7 +80,6 @@ public class World {
             }
         }
 
-        //keeping track of rooms
         ArrayList<Integer> roomVal = new ArrayList<>();
         roomVal.add(p.x);
         roomVal.add(p.y);
@@ -110,7 +87,6 @@ public class World {
         roomVal.add(height);
 
         roomDict.put(roomCount, roomVal);
-
 
         for (int i = 0; i < width + 2; i++) {
             for (int j = 0; j < height + 2; j++) {
@@ -149,8 +125,6 @@ public class World {
 
 
     public static int closestRoom(int room) {
-        //find the closest width and height to p.x and p.y. using distance formula, determine the closest room. to
-        // connect to a room, it must be unvisited
         Position roomPos = new Position(roomX(room), roomY(room));
         ArrayList<Integer> pList = new ArrayList<>();
         ArrayList<Integer> qList = new ArrayList<>();
@@ -248,8 +222,7 @@ public class World {
         }
         gateX = RANDOM.nextInt(2,WIDTH);
         gateY = RANDOM.nextInt(2, HEIGHT);
-        boolean notIt = true;
-        while (notIt) {
+        while (true) {
             if (world[gateX][gateY] == Tileset.WALL) {
                 if ((world[gateX+1][gateY] == Tileset.FLOOR || world[gateX-1][gateY] == Tileset.FLOOR || world[gateX][gateY-1] == Tileset.FLOOR || world[gateX][gateY+1] == Tileset.FLOOR)) {
                     world[gateX][gateY] = gate;
@@ -262,32 +235,6 @@ public class World {
         world[gateX][gateY] = gate;
         world[avatarX][avatarY] = avatar;
     }
-
-
-
-//    public static void lights() {
-//        if (light) {
-//            return;
-//        } else if (!light) {
-//            for (int x = 0; x < WIDTH; x += 1) {
-//                for (int y = 0; y < HEIGHT; y += 1) {
-//                    if (x < avatarX - 3 && x > avatarX + 3 && y < avatarY - 3 && y > avatarY + 3) {
-//
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    public static void switcheroo() {
-//         //grr
-//    }
-
-    /**
-     * --------------------------------------------------------------------------------------------------------
-     */
-
-    //change avatar
 
     public static void mainMenu() {
         StdDraw.clear(Color.BLACK);
@@ -304,7 +251,6 @@ public class World {
     }
 
     public static void newGame() {
-        gameStarted = true;
         StdDraw.clear(Color.BLACK);
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 + 10, "ENTER SEED:");
@@ -314,7 +260,6 @@ public class World {
         StdDraw.pause(2000);
         loadSeed(SEED);
         System.out.println("SEED: " + SEED);
-        //SEED = loadedSeed;
         allowMovement();
     }
 
@@ -324,16 +269,6 @@ public class World {
     }
 
     private static void loadGame() {
-        //BASE CASE: if load is pressed and there is no saved file there, then quitGame()
-        //how this works: when :Q/:q is typed, a .txt file is created with a log of each save (i think).
-        //refer to: https://fa22.datastructur.es/materials/proj/proj3/#interacting-with-input-strings-and-phase-2
-        //possible source?: https://stackoverflow.com/questions/2885173/how-do-i-create-a-file-and-write-to-it
-
-        //stack overflow code
-//        List<String> lines = Arrays.asList("The first line", "The second line");
-//        Path file = Paths.get("the-file-name.txt");
-//        Files.write(file, lines, StandardCharsets.UTF_8);
-////Files.write(file, lines, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
         In in = new In("./byow/Saves/saved-world");
         if (in.isEmpty()) {
             return;
@@ -350,8 +285,8 @@ public class World {
             }
             loadSeed(seed);
             doMovements(movementList);
+            allowMovement();
         }
-
     }
 
     public static void doMovements(List<String> movementList) {
@@ -378,7 +313,6 @@ public class World {
         drawScreen(WIDTH / 2, (int) 11.5, "⏾ Mr. Moon (4)");
         drawScreen(WIDTH / 2, 9, "☺ Smiley (5)");
         chooseAvatar();
-
     }
 
     public static void chooseAvatar() {
@@ -432,7 +366,7 @@ public class World {
     }
 
     public static void quitGame() {
-        getOut(SEED, newMovement);
+        getOut(SEED);
         System.exit(0);
     }
 
@@ -442,38 +376,64 @@ public class World {
         String input = "";
         while (input.length() < 1) {
             if (StdDraw.hasNextKeyTyped()) {
-                char something = StdDraw.nextKeyTyped();
-                if (something == 'n' || something == 'N') {
+                char something = Character.toLowerCase(StdDraw.nextKeyTyped());
+                if (something == 'n') {
                     input += something;
                     newGame();
-                } else if (something == 'l' || something == 'L') {
+                } else if (something == 'l') {
                     input += something;
                     loadGame();
-                } else if (something == 'a' || something == 'A') {
+                } else if (something == 'a') {
                     input += something;
                     chooseAvatarScreen();
-                }else if (something == 'q' || something == 'Q') {
+                }else if (something == 'q') {
                     input += something;
                     quitGame();
+                } else if (something == 'r') {
+                    input += something;
+                    replayGame();
                 }
             }
         }
     }
 
-    public static void drawScreen(int width, int height, String s) {
-        /* Take the input string S and display it at the center of the screen,
-         * with the pen settings given below. */
-        StdDraw.text(width, height, s);
-        StdDraw.show();
+    public static void replayGame() {
+        In in = new In("./byow/Saves/saved-world");
+        if (in.isEmpty()) {
+            return;
+        } else {
+            Long seed = Long.parseLong(in.readLine());
+            String list = in.readLine();
+            String[] newList = list.split("");
+            List<String> movementList = new ArrayList<>();
+            for (String obj : newList) {
+                if (Objects.equals(obj, "[") || Objects.equals(obj, "]") || Objects.equals(obj, ",")) {
+                    continue;
+                }
+                movementList.add(obj);
+            }
+            loadSeed(seed);
+            doSlowMovements(movementList);
+            allowMovement();
+        }
     }
 
-    public static void drawScreen(int width, int height, Long s) {
-        /* Take the input string S and display it at the center of the screen,
-         * with the pen settings given below. */
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        bigFont();
-        StdDraw.text(width, height, String.valueOf(s));
+    public static void doSlowMovements(List<String> movementList) {
+        while (!movementList.isEmpty()) {
+            StdDraw.pause(100);
+            String some = movementList.get(0).toLowerCase();
+            switch (some) {
+                case "w" -> moveUp();
+                case "a" -> moveLeft();
+                case "d" -> moveRight();
+                case "s" -> moveDown();
+            }
+            movementList.remove(some);
+        }
+    }
+
+    public static void drawScreen(int width, int height, String s) {
+        StdDraw.text(width, height, s);
         StdDraw.show();
     }
 
@@ -481,10 +441,10 @@ public class World {
         String input = "";
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
-                char something = StdDraw.nextKeyTyped();
-                if (something == 's' || something == 'S') {
+                char something = Character.toLowerCase(StdDraw.nextKeyTyped());
+                if (something == 's' && input.length() > 1) {
                     break;
-                } else if (something == 'b' || something == 'B') {
+                } else if (something == 'b') {
                     mainMenuHandler();
                 } else if (Character.isAlphabetic(something) || Character.isSpaceChar(something) || !Character.isDigit(something)) {
                     continue;
@@ -524,26 +484,27 @@ public class World {
     }
 
     public static TETile[][] loadSeed(Long seed) {
-        String ags[] = new String[10];
+        String[] ags = new String[10];
         ags[0] = String.valueOf(seed);
         return main(ags);
     }
 
     public static void allowMovement() {
-        while (true) {
+        boolean val = true;
+        while (val) {
             mouse();
             if (StdDraw.hasNextKeyTyped()) {
-                char some = StdDraw.nextKeyTyped();
-                if (some == 'w' || some == 'W') {
+                char some = Character.toLowerCase(StdDraw.nextKeyTyped());
+                if (some == 'w') {
                     moveUp();
                     movement = "w";
-                } else if (some == 'a' || some == 'A') {
+                } else if (some == 'a') {
                     moveLeft();
                     movement = "a";
-                } else if (some == 'd' || some == 'D') {
+                } else if (some == 'd') {
                     moveRight();
                     movement = "d";
-                } else if (some == 's' || some == 'S') {
+                } else if (some == 's') {
                     moveDown();
                     movement = "s";
                     // SAVE AND QUIT
@@ -551,11 +512,10 @@ public class World {
                     while (!StdDraw.hasNextKeyTyped()) {
                         continue;
                     }
-                    if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
+                    if (Character.toLowerCase(StdDraw.nextKeyTyped()) == 'q') {
                         System.out.println(newMovement);
+                        val = false;
                         quitGame();
-                    } else {
-                        continue;
                     }
                 }
                 newMovement.add(movement);
@@ -563,18 +523,12 @@ public class World {
         }
     }
 
-    /**
-     * ----------------------------------------------------------------------------------
-     */
-
-
     public static void moveLeft() {
         if (world[avatarX - 1][avatarY] == Tileset.FLOOR && world[avatarX][avatarY] == avatar) {
             world[avatarX][avatarY] = Tileset.FLOOR;
             avatarX--;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
-            //tileRender();
         }
     }
 
@@ -584,7 +538,6 @@ public class World {
             avatarX++;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
-            //tileRender();
         }
     }
 
@@ -594,7 +547,6 @@ public class World {
             avatarY++;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
-            //tileRender();
         }
     }
 
@@ -604,16 +556,11 @@ public class World {
             avatarY--;
             world[avatarX][avatarY] = avatar;
             ter.renderFrame(world);
-            //tileRender();
         }
     }
 
-    /**
-     * --------------------------------------------------------------------------------------------------------
-     *
-     * @return
-     */
     public static void mouse() {
+        java.util.Date date = new java.util.Date();
         StdDraw.clear(Color.BLACK);
         ter.renderFrame(world);
         Font fontSmall = new Font("Monaco", Font.BOLD, 15);
@@ -621,6 +568,8 @@ public class World {
         StdDraw.setPenColor(Color.white);
         int mouseX = (int) StdDraw.mouseX();
         int mouseY = (int) StdDraw.mouseY();
+        StdDraw.textLeft(WIDTH/2, maxHeight, String.valueOf(date));
+        StdDraw.show();
         if (mouseX <= 0 || mouseX >= maxWidth || mouseY <= 0 || mouseY >= maxHeight ) {
             return;
         } else if (world[mouseX][mouseY] == Tileset.NOTHING) {
@@ -640,20 +589,16 @@ public class World {
             StdDraw.show();
         }
     }
-    /** --------------------------------------------------------------------------------------------------------*/
-    private static void getOut(Long seed, ArrayList movements) {
-        String expString = movements.toString();
+
+    private static void getOut(Long seed) {
+        String expString = World.newMovement.toString();
         Out exporter = new Out("./byow/Saves/saved-world");
         exporter.println(seed);
         exporter.println(expString);
     }
 
-
-
     public static TETile[][] main(String[] args) {
-        // initialize the tile rendering engine with a window of size WIDTH x HEIGHT
         ter.initialize(WIDTH, HEIGHT);
-        // initialize tiles
         world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
@@ -667,5 +612,3 @@ public class World {
         return world;
     }
 }
-//Changes made today: added so that seed is inputted through running the program, similar to lab12
-// implemented interactWithInputString()
