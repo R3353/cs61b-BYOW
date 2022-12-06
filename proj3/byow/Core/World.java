@@ -193,22 +193,37 @@ public class World {
             yval = Integer.parseInt(s.split("\\D")[3]);
             world[xval][yval] = Tileset.FLOOR;
             floorList.add(xy1D(xval, yval));
+            if (wallList.contains(xy1D(xval, yval))) {
+                wallList.remove((Object) xy1D(xval, yval));
+            }
             wqu.union(WIDTH * HEIGHT, xy1D(xval, yval));
             if (world[xval - 1][yval] == Tileset.NOTHING) {
                 world[xval - 1][yval] = Tileset.WALL;
                 wallList.add(xy1D(xval-1, yval));
+                if (floorList.contains( xy1D(xval-1, yval))) {
+                    floorList.remove((Object)xy1D(xval-1, yval));
+                }
             }
             if (world[xval + 1][yval] == Tileset.NOTHING) {
                 world[xval + 1][yval] = Tileset.WALL;
                 wallList.add(xy1D(xval+1, yval));
+                if (floorList.contains(xy1D(xval+1, yval))) {
+                    floorList.remove((Object)xy1D(xval+1, yval));
+                }
             }
             if ((world[xval][yval - 1] == Tileset.NOTHING)) {
                 world[xval][yval - 1] = Tileset.WALL;
                 wallList.add(xy1D(xval, yval-1));
+                if (floorList.contains( xy1D(xval, yval-1))) {
+                    floorList.remove((Object)xy1D(xval, yval-1));
+                }
             }
             if ((world[xval][yval + 1] == Tileset.NOTHING)) {
                 world[xval][yval + 1] = Tileset.WALL;
                 wallList.add(xy1D(xval, yval+1));
+                if (floorList.contains( xy1D(xval, yval+1))) {
+                    floorList.remove((Object)xy1D(xval, yval+1));
+                }
             }
         }
     }
@@ -233,16 +248,22 @@ public class World {
         }
         gateX = RANDOM.nextInt(2,WIDTH);
         gateY = RANDOM.nextInt(2, HEIGHT);
-        while (!wallList.contains(xy1D(gateX, gateY))) {
+        boolean notIt = true;
+        while (notIt) {
+            if (world[gateX][gateY] == Tileset.WALL) {
+                if ((world[gateX+1][gateY] == Tileset.FLOOR || world[gateX-1][gateY] == Tileset.FLOOR || world[gateX][gateY-1] == Tileset.FLOOR || world[gateX][gateY+1] == Tileset.FLOOR)) {
+                    world[gateX][gateY] = gate;
+                    break;
+                }
+            }
             gateX = RANDOM.nextInt(2,WIDTH);
             gateY = RANDOM.nextInt(2, HEIGHT);
-            if ((world[gateX+1][gateY] == Tileset.FLOOR || world[gateX-1][gateY] == Tileset.FLOOR || world[gateX][gateY-1] == Tileset.FLOOR || world[gateX][gateY+1] == Tileset.FLOOR) && (wallList.contains(xy1D(gateX, gateY)))){
-                break;
-            }
         }
         world[gateX][gateY] = gate;
         world[avatarX][avatarY] = avatar;
     }
+
+
 
 //    public static void lights() {
 //        if (light) {
