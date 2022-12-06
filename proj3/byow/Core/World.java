@@ -256,9 +256,9 @@ public class World {
         StdDraw.clear(Color.BLACK);
         StdDraw.setPenColor(Color.WHITE);
         bigFont();
-        drawScreen(WIDTH / 2, HEIGHT / 2, "CS61B: THE GAME");
+        drawScreen(WIDTH / 2, 17, "CS61B: THE GAME");
         smallFont();
-        drawScreen((WIDTH / 2), (HEIGHT / 2) - 5, "New Game (N) \t Load Game (L) \t Change Avatar (A) \t Quit (Q)");
+        drawScreen((WIDTH / 2), 13, "New Game (N) \t Load Game (L) \t Change Avatar (A) \t Quit (Q)");
     }
 
     public static void newGame() {
@@ -269,8 +269,9 @@ public class World {
         smallFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tQuit (Q)");
         SEED = seedInput();
-        StdDraw.pause(1000);
+        StdDraw.pause(2000);
         loadSeed(SEED);
+        System.out.println("SEED: " + SEED);
         //SEED = loadedSeed;
         allowMovement();
     }
@@ -280,9 +281,17 @@ public class World {
         return loadSeed(seed);
     }
 
-
     private static void loadGame() {
+        //BASE CASE: if load is pressed and there is no saved file there, then quitGame()
+        //how this works: when :Q/:q is typed, a .txt file is created with a log of each save (i think).
+        //refer to: https://fa22.datastructur.es/materials/proj/proj3/#interacting-with-input-strings-and-phase-2
+        //possible source?: https://stackoverflow.com/questions/2885173/how-do-i-create-a-file-and-write-to-it
 
+        //stack overflow code
+//        List<String> lines = Arrays.asList("The first line", "The second line");
+//        Path file = Paths.get("the-file-name.txt");
+//        Files.write(file, lines, StandardCharsets.UTF_8);
+////Files.write(file, lines, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
     }
 
     public static void doMovements(List<String> movementList) {
@@ -302,37 +311,64 @@ public class World {
         StdDraw.clear(Color.BLACK);
         bigFont();
         drawScreen(WIDTH / 2, HEIGHT * 2 / 3, "CHOOSE AVATAR!");
-        drawScreen(WIDTH / 2, 17, "ʊ True Religion [DEFAULT] (0)");
-        drawScreen(WIDTH / 2, 16, "͠  Worm (1)");
-        drawScreen(WIDTH / 2, 15, "☃ Snowman (2)");
-        drawScreen(WIDTH / 2, 14, "⏾ Mr. Moon (3)");
-        drawScreen(WIDTH / 2, 13, "☺ Smiley (4)");
+        smallFont();
+        drawScreen(WIDTH / 2, 17, "ʊ [DEFAULT] (1)");
+        drawScreen(WIDTH / 2, (int) 15.5, "⁓ Worm (2)");
+        drawScreen(WIDTH / 2, 13, "☃ Snowman (3)");
+        drawScreen(WIDTH / 2, (int) 11.5, "⏾ Mr. Moon (4)");
+        drawScreen(WIDTH / 2, 9, "☺ Smiley (5)");
+        chooseAvatar();
 
     }
 
     public static void chooseAvatar() {
-        String input = "";
-        while (input.length() < 1) {
+        int input = 0;
+        while (input < 1) {
             if (StdDraw.hasNextKeyTyped()) {
                 char something = StdDraw.nextKeyTyped();
-                if (something == '0') {
-                    input += something;
-                }
                 if (something == '1') {
-                    input += something;
+                    input += 1;
+                }
+                if (something == '2') {
+                    input += 2;
                     avatar = Tileset.WORM;
-                } else if (something == '2') {
-                    input += something;
-                    avatar = Tileset.SNOWMAN;
                 } else if (something == '3') {
-                    input += something;
+                    input += 3;
+                    avatar = Tileset.SNOWMAN;
+                } else if (something == '4') {
+                    input += 4;
                     avatar = Tileset.MRMOON;
-                }else if (something == '4') {
-                    input += something;
+                }else if (something == '5') {
+                    input += 5;
                     avatar = Tileset.SMILEY;
                 }
             }
         }
+        StdDraw.clear(Color.BLACK);
+        bigFont();
+        drawScreen(WIDTH / 2, 17, "AVATAR CHOSEN:");
+        biggerFont();
+        if (input == 1) {
+            drawScreen(WIDTH / 2, 14, "ʊ");
+        } else if (input == 2) {
+            drawScreen(WIDTH / 2, 14, "⁓");
+            smallFont();
+            drawScreen(WIDTH / 2, (int) 12.5, "Worm");
+        } else if (input == 3) {
+            drawScreen(WIDTH / 2, 14, "☃");
+            smallFont();
+            drawScreen(WIDTH / 2, (int) 12.5, "Snowman");
+        } else if (input == 4) {
+            drawScreen(WIDTH / 2, 14, "⏾");
+            smallFont();
+            drawScreen(WIDTH / 2, (int) 12.5, "Mr. Moon");
+        } else if (input == 5) {
+            drawScreen(WIDTH / 2, 14, "☺");
+            smallFont();
+            drawScreen(WIDTH / 2, (int) 12.5, "Smiley");
+        }
+        StdDraw.pause(2000);
+        mainMenuHandler();
     }
 
     public static void quitGame() {
@@ -344,20 +380,20 @@ public class World {
         }
     }
 
-    private static void quitAndSaveGame() {
-        if (!gameStarted) {
-            return;
-        } else if (gameStarted) {
-            //movement += newMovement;
-            //loadSeed();
-            //newMovement = "";
-            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
-//            loadSeed();
-//            newMovement = "";
-            /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
-            System.exit(0);
-        }
-    }
+//    private static void quitAndSaveGame() {
+//        if (!gameStarted) {
+//            return;
+//        } else if (gameStarted) {
+//            //movement += newMovement;
+//            //loadSeed();
+//            //newMovement = "";
+//            /** @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
+////            loadSeed();
+////            newMovement = "";
+//            /* @Source https://www.geeksforgeeks.org/system-exit-in-java/ */
+//            System.exit(0);
+//        }
+//    }
 
     public static void mainMenuHandler() {
         mainMenu();
@@ -373,7 +409,7 @@ public class World {
                     loadGame();
                 } else if (something == 'a' || something == 'A') {
                     input += something;
-                    chooseAvatar();
+                    chooseAvatarScreen();
                 }else if (something == 'q' || something == 'Q') {
                     input += something;
                     quitGame();
@@ -438,6 +474,11 @@ public class World {
         StdDraw.setFont(fontSmall);
     }
 
+    private static void biggerFont() {
+        Font bigger = new Font("Monaco", Font.BOLD, 40);
+        StdDraw.setFont(bigger);
+    }
+
     public static TETile[][] loadSeed(Long seed) {
         String ags[] = new String[10];
         ags[0] = String.valueOf(seed);
@@ -461,13 +502,14 @@ public class World {
                 } else if (some == 's' || some == 'S') {
                     moveDown();
                     movement = "s";
+                    // SAVE AND QUIT
                 } else if (some == ':') {
                     while (!StdDraw.hasNextKeyTyped()) {
                         continue;
                     }
-                    if (StdDraw.nextKeyTyped() == 'q') {
+                    if (StdDraw.nextKeyTyped() == 'q' || StdDraw.nextKeyTyped() == 'Q') {
                         System.out.println(newMovement);
-                        quitGame();
+                        System.exit(0);
                     } else {
                         continue;
                     }
@@ -530,21 +572,25 @@ public class World {
     public static void mouse() {
         StdDraw.clear(Color.BLACK);
         ter.renderFrame(world);
-        Font fontSmall = new Font("Monaco", Font.BOLD, 10);
+        Font fontSmall = new Font("Monaco", Font.BOLD, 15);
         StdDraw.setFont(fontSmall);
         StdDraw.setPenColor(Color.white);
         int mouseX = (int) StdDraw.mouseX();
         int mouseY = (int) StdDraw.mouseY();
-        if (mouseX <= 0 || mouseX >= WIDTH || mouseY <= 0 || mouseY >= HEIGHT ) {
+        if (mouseX <= 0 || mouseX >= maxWidth || mouseY <= 0 || mouseY >= maxHeight ) {
             return;
         } else if (world[mouseX][mouseY] == Tileset.NOTHING) {
-            drawScreen(2, 25, Tileset.NOTHING.description());
+            StdDraw.textRight(maxWidth, maxHeight, "THE VOID.™");
+            StdDraw.show();
         } else if (world[mouseX][mouseY] == Tileset.WALL) {
-            drawScreen(2, 25, Tileset.WALL.description());
+            StdDraw.textRight(maxWidth, maxHeight, "amogus wall");
+            StdDraw.show();
         } else if (world[mouseX][mouseY] == Tileset.FLOOR) {
-            drawScreen(2, 25, Tileset.FLOOR.description());
+            StdDraw.textRight(maxWidth, maxHeight, Tileset.FLOOR.description());
+            StdDraw.show();
         } else if (world[mouseX][mouseY] == avatar) {
-            drawScreen(2, 25, avatar.description());
+            StdDraw.textRight(maxWidth, maxHeight, avatar.description());
+            StdDraw.show();
         }
     }
     /** --------------------------------------------------------------------------------------------------------*/

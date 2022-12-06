@@ -36,7 +36,7 @@ public class Tileset {
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     public static final TETile REESE = new TETile('ʊ', Color.green, Color.black, "you");
 
-    public static final TETile WORM = new TETile('͠', Color.green, Color.black, "you");
+    public static final TETile WORM = new TETile('⁓', Color.green, Color.black, "you");
     public static final TETile SNOWMAN = new TETile('☃', Color.green, Color.black, "you");
     public static final TETile MRMOON = new TETile('⏾', Color.green, Color.black, "you");
     public static final TETile SMILEY = new TETile('☺', Color.green, Color.black, "you");
