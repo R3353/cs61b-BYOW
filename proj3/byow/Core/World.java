@@ -254,7 +254,11 @@ public class World {
         smallFont();
         drawScreen(WIDTH / 2, HEIGHT / 2 - 10, "Save (S)\t\tBack (B)");
         SEED = seedInput();
-        StdDraw.pause(2000);
+        StdDraw.pause(1500);
+        StdDraw.clear(Color.BLACK);
+        bigFont();
+        drawScreen(WIDTH / 2, HEIGHT / 2, "FIND THE EXIT OR ELSE U HAVE NO DRIP!!!");
+        StdDraw.pause(2500);
         loadSeed(SEED);
         System.out.println("SEED: " + SEED);
         allowMovement();
@@ -428,6 +432,15 @@ public class World {
         }
     }
 
+    public static void endScreen() {
+        StdDraw.clear(Color.BLACK);
+        bigFont();
+        drawScreen(WIDTH / 2, 29, "LETS GOOOOOOOOOOOOOOOOO");
+        drawScreen(WIDTH / 2, 1, "U GOT DRIP!!!!!!!!");
+        avatarSZ();
+        drawScreen(WIDTH / 2, HEIGHT / 2, String.valueOf(avatar.character()));
+    }
+
     public static void drawScreen(int width, int height, String s) {
         StdDraw.text(width, height, s);
         StdDraw.show();
@@ -477,6 +490,11 @@ public class World {
     private static void biggerFont() {
         Font bigger = new Font("Monaco", Font.BOLD, 40);
         StdDraw.setFont(bigger);
+    }
+
+    private static void avatarSZ() {
+        Font yeetyah = new Font("Monaco", Font.BOLD, 100);
+        StdDraw.setFont(yeetyah);
     }
 
     public static TETile[][] loadSeed(Long seed) {
