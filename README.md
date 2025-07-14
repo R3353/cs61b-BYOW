@@ -11,7 +11,7 @@ Project "Build Your Own World" completed as a part of CS61B at UC Berkeley. Priv
 ## Disclaimers
 This repository is intended for **portfolio and professional demonstration purposes only**.
 
-All code was originally written by my partner and me during my time in CS61B at UC Berkeley. It has been modified and published here to demonstrate my coding knowledge
+All code was originally written by my partner and me during my time in CS61B at UC Berkeley. It has been modified and published here to demonstrate my coding knowledge.
 
 **Please do not reference or reuse this code if you are currently enrolled in CS61B** or any similar course. Doing so violates academic integrity policies.
 
