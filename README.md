@@ -1,4 +1,4 @@
-Project completed as a part of Data Structures & Algorithms course.
+Project completed as a part of my DSA course.
 
 ## Coding Language:
 - Java
@@ -11,6 +11,6 @@ Project completed as a part of Data Structures & Algorithms course.
 ## Disclaimers
 This repository is intended for **portfolio and professional demonstration purposes only**.
 
-All code was originally written by my partner and me during my time in my Data Structures & Algorithms Course. It has been modified and published here to demonstrate my coding knowledge.
+All code was originally written by my partner and me during my time in my DSA course. It has been modified and published here to demonstrate my coding knowledge.
 
 **!! Please do not reference or reuse this code if you are currently enrolled in this course** or any similar course. Doing so violates academic integrity policies. **!!**
