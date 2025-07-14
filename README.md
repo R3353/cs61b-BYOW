@@ -1,4 +1,4 @@
-Project "Build Your Own World" completed as a part of CS61B at UC Berkeley. Private repository due to reuse of project by course staff. I do not own the skeleton code; however, the implementation of this project belongs to me, Reese Mendoza, and my group partner, Ravpreet Grewal.
+Project "Build Your Own World" completed as a part of CS61B at UC Berkeley. I do not own the skeleton code; however, the implementation of this project belongs to me, Reese Mendoza, and my group partner, Ravpreet Grewal.
 
 ## Coding Language:
 - Java
